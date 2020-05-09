@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Data
@@ -15,12 +16,10 @@ import java.util.Set;
 @AllArgsConstructor
 public class SignupRequest {
     @NotBlank
-    private String username;
+    private String noTelepon;
  
     @NotBlank
     private String email;
-    
-    private Set<String> role;
 
     @Length(min = 6)
     @NotBlank
@@ -29,5 +28,10 @@ public class SignupRequest {
     @NotBlank
     @Column
     private String confirmPassword;
+
+    @NotBlank
+    @Size(max = 20)
+    @Column
+    private String namaUser;
 
 }

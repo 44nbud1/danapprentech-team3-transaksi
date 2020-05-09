@@ -6,11 +6,9 @@ import project.akhir.danapprentechteam3.models.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	User findByUsername(String username);
-
-	void deleteByUsername(String username);
-
-	Boolean existsByUsername(String username);
-
+	User findByNoTelepon(String noTelepon);
+	void deleteByNoTelepon(String noTelepon);
+	Boolean existsByNoTelepon(String noTelepon);
 	Boolean existsByEmail(String email);
+	User findByEmail(String email);
 }

@@ -1,5 +1,8 @@
 package project.akhir.danapprentechteam3.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,11 +17,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(	name = "users",
-		uniqueConstraints = { 
-			@UniqueConstraint(columnNames = "username"),
-			@UniqueConstraint(columnNames = "email")
-		})
+@Table(	name = "users")
+
+//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id", scope = User.class)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +28,7 @@ public class User {
 	@NotBlank
 	@Size(max = 20)
 	@Column
-	private String username;
+	private String noTelepon;
 
 	@NotBlank
 	@Size(max = 20)
@@ -43,6 +44,18 @@ public class User {
 	@Column
 	private String password;
 
+	@NotBlank
+	@Column
+	private String virtualAccount ;
+
+	@JsonIgnore
 	@Transient
 	private Set<Role> roles = new HashSet<>();
+
+	@Transient
+	private String message ;
+
+	@Transient
+	private String status ;
+
 }

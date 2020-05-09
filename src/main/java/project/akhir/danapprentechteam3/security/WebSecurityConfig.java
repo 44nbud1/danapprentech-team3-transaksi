@@ -20,8 +20,8 @@ import project.akhir.danapprentechteam3.security.services.UserDetailsServiceImpl
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-		// securedEnabled = true,
-		// jsr250Enabled = true,
+		 securedEnabled = true,
+		 jsr250Enabled = true,
 		prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
@@ -31,7 +31,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private AuthEntryPointJwt unauthorizedHandler;
 
 	@Bean
-	public AuthTokenFilter authenticationJwtTokenFilter() {
+	public AuthTokenFilter authenticationJwtTokenFilter()
+	{
 		return new AuthTokenFilter();
 	}
 
@@ -42,7 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
+	public AuthenticationManager authenticationManagerBean() throws Exception
+	{
 		return super.authenticationManagerBean();
 	}
 

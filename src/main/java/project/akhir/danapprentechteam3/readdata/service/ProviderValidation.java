@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import project.akhir.danapprentechteam3.readdata.model.DataProviderIndosat;
 import project.akhir.danapprentechteam3.readdata.model.DataProviderXl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,35 +17,21 @@ public class ProviderValidation
     @Autowired
     DataProviderXl dataProviderXl;
 
-    public boolean validProviderXl (String username)
+    public boolean validasiProvider (String noTelp)
     {
+        List<String> allProvider = new ArrayList<>();
         boolean status = false;
         List<String> xl = dataProviderXl.dataConsumenXl();
-        for (int i = 0; i < xl.size(); i++)
-        {
-            String dataXl = xl.get(i);
-            if (dataXl == username)
-            {
-                status = true;
-            }
-            break;
-        }
-        return status;
-    }
-
-    public boolean validProviderIndosat(String username)
-    {
-        boolean status = false;
         List<String> indosat = dataProviderIndosat.dataConsumenIndosat();
+        indosat.addAll(xl);
+
         for (int i = 0; i < indosat.size(); i++)
         {
-            String dataIndosat = indosat.get(i);
-
-            if (dataIndosat == username)
+            String data = indosat.get(i);
+            if (data.equalsIgnoreCase(noTelp))
             {
                 status = true;
             }
-            break;
         }
         return status;
     }

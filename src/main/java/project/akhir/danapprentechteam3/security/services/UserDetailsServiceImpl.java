@@ -20,11 +20,12 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
 	@Override
 	@Transactional
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByUsername(username);
+	public UserDetails loadUserByUsername(String noTelp) throws UsernameNotFoundException {
+		User user = userRepository.findByNoTelepon(noTelp);
 
 		if (user == null){
-			return (UserDetails) ResponseEntity.ok(new MessageResponse("User Not Found with username: " + username));
+			return (UserDetails) ResponseEntity.badRequest().body(new MessageResponse(
+					"User Not Found with Phone number : " + noTelp,"400"));
 		}
 
 		return UserDetailsImpl.build(user);
