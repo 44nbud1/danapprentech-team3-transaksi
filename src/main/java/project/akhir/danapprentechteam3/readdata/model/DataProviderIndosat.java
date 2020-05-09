@@ -1,4 +1,5 @@
-package project.akhir.danapprentechteam3.readdata;
+package project.akhir.danapprentechteam3.readdata.model;
+
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,15 +13,14 @@ import java.io.Reader;
 import java.util.*;
 
 @Service
-public class DataProviderXl
-{
+public class DataProviderIndosat {
 
-    public List<String> dataConsumenXl()
+    public List<String> dataConsumenIndosat()
     {
         JSONParser parser = new JSONParser();
         ArrayList<String> data = new ArrayList<>();
 
-        try (Reader reader = new FileReader("/Users/setiawanaa/IdeaProjects/danapprentech-team3/src/main/resources/xl/customerxl.json")) {
+        try (Reader reader = new FileReader("/Users/setiawanaa/IdeaProjects/danapprentech-team3/src/main/resources/indosat/customerIndosat.json")) {
 
             Object object = new JSONParser().parse(reader);
 

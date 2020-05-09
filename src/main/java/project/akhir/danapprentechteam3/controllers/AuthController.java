@@ -13,6 +13,9 @@ import project.akhir.danapprentechteam3.payload.request.LoginRequest;
 import project.akhir.danapprentechteam3.payload.request.SignupRequest;
 import project.akhir.danapprentechteam3.payload.response.JwtResponse;
 import project.akhir.danapprentechteam3.payload.response.MessageResponse;
+import project.akhir.danapprentechteam3.readdata.model.DataProviderIndosat;
+import project.akhir.danapprentechteam3.readdata.model.DataProviderXl;
+import project.akhir.danapprentechteam3.readdata.service.ProviderValidation;
 import project.akhir.danapprentechteam3.repository.UserRepository;
 import project.akhir.danapprentechteam3.security.jwt.JwtUtils;
 import project.akhir.danapprentechteam3.security.passwordvalidation.PasswordAndEmailVal;
@@ -46,6 +49,9 @@ public class AuthController {
 	@Autowired
 	JwtUtils jwtUtils;
 
+	@Autowired
+	ProviderValidation providerValidation;
+
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -74,6 +80,14 @@ public class AuthController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+
+		if (!providerValidation.validProviderXl(signUpRequest.getUsername()) &&
+				!providerValidation.validProviderIndosat(signUpRequest.getUsername()))
+		{
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Username is not registered with the service provider!"));
+		}
 
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
@@ -126,6 +140,12 @@ public class AuthController {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("ERROR : Email is already in use!"));
+		}
+
+		if (passwordEmailVal.confirmPassword(signUpRequest.getPassword(),signUpRequest.getConfirmPassword())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Please check your password not Match!"));
 		}
 
 		// Create new user's account and encode password

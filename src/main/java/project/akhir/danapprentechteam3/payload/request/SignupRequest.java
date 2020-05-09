@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.Column;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
@@ -23,5 +25,9 @@ public class SignupRequest {
     @Length(min = 6)
     @NotBlank
     private String password;
+
+    @NotBlank
+    @Column
+    private String confirmPassword;
 
 }

@@ -46,6 +46,15 @@ public class PasswordAndEmailVal
         return matcher.matches();
     }
 
+    public boolean confirmPassword(String password, String confirmPassword){
+        boolean status = false;
+        if (password.equals(confirmPassword))
+        {
+            status = true;
+        }
+        return status;
+    }
+
     public boolean EmailValidator (String password){
         pattern = Pattern.compile(EMAIL_REGEX);
         matcher = pattern.matcher(password);
