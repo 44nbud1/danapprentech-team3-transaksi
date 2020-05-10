@@ -35,8 +35,8 @@ public class UserDetailsServiceImpl implements UserDetailsService
 		return UserDetailsImpl.build(user);
 	}
 
-	public void updatePassword(String password, String email) {
-		forgotPasswordRepository.updatePassword(password, email);
-	}
+//	public void updatePassword(String password, String email) {
+//		forgotPasswordRepository.updatePassword(password, email);
+//	}
 
 }

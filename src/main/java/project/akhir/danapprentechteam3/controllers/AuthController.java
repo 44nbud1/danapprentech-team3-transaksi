@@ -20,6 +20,7 @@ import project.akhir.danapprentechteam3.rabbitmq.rabbitconsumer.RabbitMqConsumer
 import project.akhir.danapprentechteam3.rabbitmq.rabbitproducer.RabbitMqProducer;
 import project.akhir.danapprentechteam3.readdata.service.ProviderValidation;
 import project.akhir.danapprentechteam3.repository.ConfirmationTokenRepository;
+import project.akhir.danapprentechteam3.repository.ForgotPasswordRepository;
 import project.akhir.danapprentechteam3.repository.UserRepository;
 import project.akhir.danapprentechteam3.security.jwt.AuthEntryPointJwt;
 import project.akhir.danapprentechteam3.security.jwt.JwtUtils;
@@ -44,6 +45,8 @@ public class AuthController {
 	private static String token = null;
 
 	private String plainPassword = null;
+
+	Long count =0L;
 
 	@Autowired
 	PasswordAndEmailVal passwordEmailVal;
@@ -74,6 +77,9 @@ public class AuthController {
 
 	@Autowired
 	ConfirmationTokenRepository confirmationTokenRepository;
+
+	@Autowired
+	ForgotPasswordRepository forgotPasswordRepository;
 
 	//Queue
 	private static final String signupKey = "signupKey";
@@ -242,13 +248,19 @@ public class AuthController {
 	{
 		 Optional<EmailVerification> token = confirmationTokenRepository.findById(id);
 
-		if (token != null)
-		{
-			return ResponseEntity.ok(new MessageResponse("Account Verified","200"));
-		} else
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","200"));
-		}
+			if (token != null && count < 1)
+			{
+				count ++;
+				System.out.println(count);
+				return ResponseEntity.ok(new MessageResponse("Account Verified","200"));
+
+			} else if (count > 1)
+			{
+				return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Already used...!","400"));
+			}
+			{
+				return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","400"));
+			}
 	}
 
 	@PostMapping("/signout")
@@ -336,5 +348,92 @@ public class AuthController {
 		}
 	}
 
+	@PostMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword(@RequestBody ForgotPassword forgotPassword)
+	{
+		User user = userRepository.findByEmail(forgotPassword.getEmail());
 
+		if (userRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			ForgotPassword forgotPasswords = new ForgotPassword();
+			forgotPasswords.setEmail(forgotPassword.getEmail());
+			forgotPasswordRepository.save(forgotPasswords);
+
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(user.getEmail());
+			mailMessage.setSubject("Test test");
+			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
+			mailMessage.setText("To confirm reset password "+"http://localhost:6565/api/auth/confirm-password/"+
+					forgotPasswords.getTokenReset());
+			emailSenderService.sendEmail(mailMessage);
+			return ResponseEntity.ok(new MessageResponse("Success send Forgot Password","200"));
+		}else {
+			return ResponseEntity.ok(new MessageResponse("Email not registered...!","400"));
+		}
+
+	}
+
+	@GetMapping("confirm-password/{token}")
+	public ResponseEntity<?> confirmResetPassword(@PathVariable("token") String token)
+	{
+		return ResponseEntity.ok(new MessageResponse(token,"ok"));
+	}
+
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> resetUserPassword(@RequestBody User user)
+	{
+		if (user.getEmail() != null)
+		{
+			User userToken = userRepository.findByEmail(user.getEmail());
+			userToken.setPassword(encoder.encode(user.getPassword()));
+			userRepository.save(userToken);
+			return ResponseEntity.ok(new MessageResponse("Password successfully reset","200"));
+		}
+		return ResponseEntity.ok(new MessageResponse("message the link is invalid or broken","400"));
+	}
+
+	@PostMapping("/pwd")
+	public ResponseEntity<?> test(@RequestBody ForgotPassword forgotPassword)
+	{
+		User user = userRepository.findByEmail(forgotPassword.getEmail());
+		Long id = user.getId();
+		String noTelepon = user.getNoTelepon();
+		String namaUser = user.getNamaUser();
+		String email = user.getEmail();
+		String va = user.getVirtualAccount();
+		String password = encoder.encode(forgotPassword.getPassword());
+
+
+		if (userRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+
+			//delete data
+			userRepository.deleteById(id);
+
+			// new password
+			User users = new User();
+			users.setId(id);
+			users.setNoTelepon(noTelepon);
+			users.setNamaUser(namaUser);
+			users.setEmail(email);
+			users.setVirtualAccount(va);
+			users.setPassword(password);
+			userRepository.save(users);
+
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(user.getEmail());
+			mailMessage.setSubject("Congratulation, your password has been upadated successfully!!");
+			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
+			mailMessage.setText("Don forget your password again, Thanks");
+			emailSenderService.sendEmail(mailMessage);
+			return ResponseEntity.ok(user);
+		}else {
+			return ResponseEntity.ok(new MessageResponse("Email not registered...!","400"));
+		}
+
+	}
 }
+// "$2a$10$o7fKVjgorcPhdfp39wRCe.JULreBuprTP/ljlqHp.hHWxkSao7eF.",
+// $2a$10$o7fKVjgorcPhdfp39wRCe.JULreBuprTP/ljlqHp.hHWxkSao7eF.",
+
+//$2a$10$nDM7K4Z/ZJnbOJxCkGl/jeyMnpQCJrRnfb.KpXHb9Yffd//oCEMui
