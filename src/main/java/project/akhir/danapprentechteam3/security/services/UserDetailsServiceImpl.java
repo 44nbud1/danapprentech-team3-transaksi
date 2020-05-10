@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.akhir.danapprentechteam3.models.User;
 import project.akhir.danapprentechteam3.payload.response.MessageResponse;
+import project.akhir.danapprentechteam3.repository.ForgotPasswordRepository;
 import project.akhir.danapprentechteam3.repository.UserRepository;
 
 @Service
@@ -17,6 +18,9 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	ForgotPasswordRepository forgotPasswordRepository;
 
 	@Override
 	@Transactional
@@ -29,6 +33,10 @@ public class UserDetailsServiceImpl implements UserDetailsService
 		}
 
 		return UserDetailsImpl.build(user);
+	}
+
+	public void updatePassword(String password, String email) {
+		forgotPasswordRepository.updatePassword(password, email);
 	}
 
 }

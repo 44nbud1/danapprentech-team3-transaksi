@@ -29,7 +29,7 @@ public class RabbitMqConsumer
         }
 
         static final String Loginqueue = "loginKey";
-        @RabbitListener(queues = Loginqueue)
+//        @RabbitListener(queues = Loginqueue)
         public LoginRequest loginRequest(LoginRequest loginRequest)
         {
             System.out.println("");
@@ -37,7 +37,7 @@ public class RabbitMqConsumer
         }
 
         static final String Logoutqueue = "logoutKey";
-        @RabbitListener(queues = Logoutqueue)
+//        @RabbitListener(queues = Logoutqueue)
         public LoginRequest logoutRequest(LoginRequest loginRequest)
         {
             System.out.println("");
@@ -45,7 +45,7 @@ public class RabbitMqConsumer
         }
 
         static final String updatequeue = "updateKey";
-        @RabbitListener(queues = updatequeue)
+//        @RabbitListener(queues = updatequeue)
         public LoginRequest updateRequest(LoginRequest loginRequest)
         {
             System.out.println("");

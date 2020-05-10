@@ -19,6 +19,7 @@ public class RabbitConfig
     private static final String signupQueue = "signupQueue";
     private static final String loginQueue = "loginQueue";
     private static final String logoutQueue = "logoutQueue";
+    private static final String updateQueue = "updateQueue";
 
     //Echange
     private static final String exchangeDirect = "direct-Exchange";
@@ -27,6 +28,8 @@ public class RabbitConfig
     private static final String routingKeyDirect1 = "signupKey";
     private static final String routingKeyDirect2 = "loginKey";
     private static final String routingKeyDirect3 = "logoutKey";
+    private static final String routingKeyDirect4 = "updateKey";
+
 
     //sign up
     @Bean
@@ -47,6 +50,13 @@ public class RabbitConfig
     Queue logoutQueue()
     {
         return new Queue(logoutQueue,true,false,false);
+    }
+
+    //logout
+    @Bean
+    Queue updateQueue()
+    {
+        return new Queue(updateQueue,true,false,false);
     }
 
     @Bean
@@ -71,6 +81,12 @@ public class RabbitConfig
     Binding loginBinding()
     {
         return BindingBuilder.bind(loginQueue()).to(directExchange()).with(routingKeyDirect2);
+    }
+
+    @Bean
+    Binding updateBinding()
+    {
+        return BindingBuilder.bind(updateQueue()).to(directExchange()).with(routingKeyDirect4);
     }
 
     @Bean

@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,15 +19,18 @@ import project.akhir.danapprentechteam3.payload.response.MessageResponse;
 import project.akhir.danapprentechteam3.rabbitmq.rabbitconsumer.RabbitMqConsumer;
 import project.akhir.danapprentechteam3.rabbitmq.rabbitproducer.RabbitMqProducer;
 import project.akhir.danapprentechteam3.readdata.service.ProviderValidation;
+import project.akhir.danapprentechteam3.repository.ConfirmationTokenRepository;
 import project.akhir.danapprentechteam3.repository.UserRepository;
 import project.akhir.danapprentechteam3.security.jwt.AuthEntryPointJwt;
 import project.akhir.danapprentechteam3.security.jwt.JwtUtils;
 import project.akhir.danapprentechteam3.security.passwordvalidation.PasswordAndEmailVal;
+import project.akhir.danapprentechteam3.security.services.EmailSenderService;
 import project.akhir.danapprentechteam3.security.services.UserDetailsImpl;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
@@ -64,6 +69,12 @@ public class AuthController {
 	@Autowired
 	RabbitMqProducer rabbitMqProducer;
 
+	@Autowired
+	EmailSenderService emailSenderService;
+
+	@Autowired
+	ConfirmationTokenRepository confirmationTokenRepository;
+
 	//Queue
 	private static final String signupKey = "signupKey";
 
@@ -80,7 +91,7 @@ public class AuthController {
 		plainPassword = loginRequest.getPassword();
 
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()));
+				new UsernamePasswordAuthenticationToken(login.getNoTelepon(), login.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		token = jwtUtils.generateJwtToken(authentication);
@@ -108,10 +119,6 @@ public class AuthController {
 
 		// take data from rabbit mq
 		SignupRequest signup = rabbitMqCustomer.recievedMessage(signUpRequest);
-		System.out.println(signup.getConfirmPassword());
-		System.out.println(signup.getEmail());
-		System.out.println(signup.getPassword());
-		System.out.println(signup.getConfirmPassword());
 
 		logger.info("take data from rabbit mq");
 
@@ -215,7 +222,33 @@ public class AuthController {
 		user.setStatus("200");
 		user.setMessage("signup is successfully");
 		//save to database
-		return ResponseEntity.ok(userRepository.save(user));
+		User users = userRepository.save(user);
+
+		EmailVerification confirmationToken = new EmailVerification();
+		confirmationTokenRepository.save(confirmationToken);
+
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(user.getEmail());
+		mailMessage.setSubject("Test test");
+		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
+		mailMessage.setText("To confirm "+"http://localhost:6565/api/auth/confirmation-account/"+
+				user.getId());
+		emailSenderService.sendEmail(mailMessage);
+		return ResponseEntity.ok(users);
+	}
+
+	@GetMapping("/confirmation-account/{id}")
+	public ResponseEntity<?> confirmationUserAccount(@PathVariable("id") Long id)
+	{
+		 Optional<EmailVerification> token = confirmationTokenRepository.findById(id);
+
+		if (token != null)
+		{
+			return ResponseEntity.ok(new MessageResponse("Account Verified","200"));
+		} else
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","200"));
+		}
 	}
 
 	@PostMapping("/signout")
@@ -227,14 +260,14 @@ public class AuthController {
 		// take from rabbit
 		LoginRequest logout = rabbitMqCustomer.logoutRequest(loginRequest);
 
-		User us = userRepository.findByNoTelepon(logout.getUsername());
+		User us = userRepository.findByNoTelepon(logout.getNoTelepon());
 
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-				logout.getUsername(), logout.getPassword());
+				logout.getNoTelepon(), logout.getPassword());
 
 		Authentication authentication = authenticationManager.authenticate(authRequest);
 
-		if (token != null && logout.getPassword() != null && logout.getUsername() != null)
+		if (token != null && logout.getPassword() != null && logout.getNoTelepon() != null)
 		{
 
 			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -262,16 +295,16 @@ public class AuthController {
 		//take from rabbit
 		LoginRequest update = rabbitMqCustomer.updateRequest(loginRequest);
 
-		User us = userRepository.findByNoTelepon(update.getUsername());
+		User us = userRepository.findByNoTelepon(update.getNoTelepon());
 
 		UsernamePasswordAuthenticationToken authRequest = new
-				UsernamePasswordAuthenticationToken(update.getUsername(), plainPassword);
+				UsernamePasswordAuthenticationToken(update.getNoTelepon(), plainPassword);
 
 		Authentication authentication = authenticationManager.authenticate(authRequest);
 
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-		if (token != null && update.getPassword() != null && update.getUsername() != null)
+		if (token != null && update.getPassword() != null && update.getNoTelepon() != null)
 		{
 			//parse data
 			String username =userDetails.getUsername();
@@ -298,16 +331,10 @@ public class AuthController {
 			return ResponseEntity.ok((users+token));
 		}else
 		{
-			return ResponseEntity.ok((new MessageResponse("ERROR : You are not logged in..!, Please login",
+			return ResponseEntity.badRequest().body((new MessageResponse("ERROR : You are not logged in..!, Please login",
 					"400")));
 		}
 	}
 
-	@PostMapping("/forgot-userpassword")
-	public ResponseEntity<?> resetPasswordUser()
-	{
 
-
-		return ResponseEntity.ok("operationResult");
-	}
 }
