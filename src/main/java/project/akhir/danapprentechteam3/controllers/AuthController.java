@@ -1,11 +1,14 @@
 package project.akhir.danapprentechteam3.controllers;
 
+import com.twilio.Twilio;
+
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,11 +29,14 @@ import project.akhir.danapprentechteam3.security.jwt.AuthEntryPointJwt;
 import project.akhir.danapprentechteam3.security.jwt.JwtUtils;
 import project.akhir.danapprentechteam3.security.passwordvalidation.PasswordAndEmailVal;
 import project.akhir.danapprentechteam3.security.services.EmailSenderService;
+import project.akhir.danapprentechteam3.security.services.SmsOtpServiceImpl;
 import project.akhir.danapprentechteam3.security.services.UserDetailsImpl;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
@@ -38,7 +44,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
 
@@ -80,6 +86,9 @@ public class AuthController {
 
 	@Autowired
 	ForgotPasswordRepository forgotPasswordRepository;
+
+	@Autowired
+	SmsOtpServiceImpl smsOtpService;
 
 	//Queue
 	private static final String signupKey = "signupKey";
@@ -432,8 +441,70 @@ public class AuthController {
 		}
 
 	}
-}
-// "$2a$10$o7fKVjgorcPhdfp39wRCe.JULreBuprTP/ljlqHp.hHWxkSao7eF.",
-// $2a$10$o7fKVjgorcPhdfp39wRCe.JULreBuprTP/ljlqHp.hHWxkSao7eF.",
 
-//$2a$10$nDM7K4Z/ZJnbOJxCkGl/jeyMnpQCJrRnfb.KpXHb9Yffd//oCEMui
+	private Map<String, SmsOtp> otpData = new HashMap<>();
+
+	private final static String ACCOUNT_SID = "ACb3c4fe3afb030fc4975038ed77135694";
+	private final static String ACCOUNT_AUTH_ID = "0daa8a0588e12aa01507690d0ac8fc61";
+
+	static {
+		Twilio.init(ACCOUNT_SID,ACCOUNT_AUTH_ID);
+	}
+
+	@PostMapping("/send-otp/{mobileNumber}/otp")
+	public ResponseEntity<?> sendOtp (@PathVariable ("mobileNumber") String mobileNumber) throws IOException {
+		SmsOtp otp = new SmsOtp();
+		otp.setMobileNumber(mobileNumber);
+		otp.setCodeOtp(smsOtpService.createOtp());
+		otp.setExpirytime(System.currentTimeMillis()+18000);
+		otpData.put(mobileNumber,otp);
+
+		smsOtpService.sendSMS(mobileNumber, otp.getCodeOtp());
+
+		return ResponseEntity.ok(new MessageResponse("Otp Is Send Succesfully","200"));
+	}
+
+	@PostMapping("/confirmation-otp/{mobileNumber}/otp")
+	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody
+										SmsOtp smsOtp)  {
+
+		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
+		}
+
+		System.out.println(mobileNumber);
+
+		System.out.println(otpData);
+		System.out.println(otpData.containsKey(mobileNumber));
+		SmsOtp otp = otpData.get(mobileNumber);
+//
+//		if (!otpData.containsValue(mobileNumber))
+//		{
+//			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Mobile number not found", "400"));
+//		}
+
+		if (otpData == null)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please Cek", "400"));
+		}
+
+//		if (!(otp.getExpirytime() >= System.currentTimeMillis()))
+//		{
+//			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
+//		}
+
+		if (!(smsOtp.getCodeOtp().equals(otp.getCodeOtp())))
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Invalid Otp","400"));
+		}
+
+		return ResponseEntity.ok(new MessageResponse("OTP verified successfully","200"));
+	}
+
+//	@RequestMapping(value = "/confirmation-otp/{mobilNumber}/otp", method = RequestMethod.POST)
+//	public Message sendSMS(@PathVariable ("mobilNumber") String mobilNumber) {
+//
+//		return smsOtpService.sendSMS(mobilNumber, smsOtpService.createOtp());
+//	}
+}
