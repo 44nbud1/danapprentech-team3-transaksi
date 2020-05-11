@@ -16,5 +16,6 @@ public class SmsOtp {
     private Long id;
     private String codeOtp;
     private String mobileNumber;
-    private Long expirytime;
+    private Boolean statusOtp;
+
 }

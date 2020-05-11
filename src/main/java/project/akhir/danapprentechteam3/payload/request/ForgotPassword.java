@@ -15,19 +15,28 @@ public class ForgotPassword<U, L extends Number> {
     @Column(name = "id_reset")
     private Long idReset;
     @Column(name = "token_reset_password")
-    private String tokenReset ;
+    private String token ;
+
+    private String otp ;
+
+    @Column
+    private boolean statusOtp ;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
     private String email;
+    private String noTelepon;
 
     @Transient
-    private String password;
+    private String newPassword;
+
+    @Transient
+    private String confirmPassword;
 
     public ForgotPassword()
     {
         createdDate = new Date();
-        tokenReset = UUID.randomUUID().toString();
+        token = UUID.randomUUID().toString();
     }
 }

@@ -7,4 +7,5 @@ import project.akhir.danapprentechteam3.payload.request.EmailVerification;
 @Repository
 public interface ConfirmationTokenRepository extends JpaRepository<EmailVerification,Long> {
     EmailVerification findByConfirmationToken(String confirmationToken);
+    void deleteByConfirmationToken(String token);
 }

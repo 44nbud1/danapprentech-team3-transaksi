@@ -1,30 +1,26 @@
 package project.akhir.danapprentechteam3.controllers;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import project.akhir.danapprentechteam3.payload.request.EmailVerification;
+
+import java.util.*;
 
 public class Testing {
-
     public static void main(String[] args) {
-        Timer timer = new Timer();
-        timer.schedule(new App(), 0, 1000);
-    }
-}
+         Map<String, EmailVerification> signUpMap = new HashMap<>();
+         String signupKeyVal = "";
 
-class App extends TimerTask {
+        // email verify
+        signupKeyVal = "+6285777488828";
 
-    int countdown = 5;
+        EmailVerification confirmationToken = new EmailVerification();
 
-    public void run() {
+        confirmationToken.setStatusEmail(true);
+        confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
+        confirmationToken.setCreatedDate(new Date());
+        signUpMap.put(signupKeyVal,confirmationToken);
 
 
-        while (countdown != 0)
-        {
-            countdown = countdown - 1;
-            System.out.println(countdown);
-        }
-        countdown = 0;
-        System.out.println(countdown);
+        System.out.println(signUpMap.get("+6285777488828").getConfirmationToken());
     }
 
 }

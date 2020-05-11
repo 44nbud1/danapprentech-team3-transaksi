@@ -6,9 +6,12 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -33,5 +36,11 @@ public class SignupRequest {
     @Size(max = 20)
     @Column
     private String namaUser;
+
+    @Transient
+    private String smsToken;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
 }

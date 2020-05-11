@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-
 @Data
 @Entity
 public class EmailVerification
@@ -15,7 +14,8 @@ public class EmailVerification
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_id")
-    private Long tokenId ;
+    private Long id;
+
     @Column(name = "confirmation_token")
     private String confirmationToken;
     @Temporal(TemporalType.TIMESTAMP)

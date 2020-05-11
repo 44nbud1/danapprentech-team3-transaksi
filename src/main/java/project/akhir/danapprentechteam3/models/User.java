@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,12 +28,12 @@ public class User {
 	private Long id;
 
 	@NotBlank
-	@Size(max = 20)
+	@Size(max = 15)
 	@Column
 	private String noTelepon;
 
 	@NotBlank
-	@Size(max = 20)
+	@Size(min = 3,max = 20)
 	@Column
 	private String namaUser;
 
@@ -57,5 +59,13 @@ public class User {
 
 	@Transient
 	private String status ;
+
+	private Long saldo = 1000000L ;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate = new Date();
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updatedDate = new Date();
 
 }

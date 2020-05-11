@@ -10,25 +10,22 @@ import project.akhir.danapprentechteam3.repository.SmsOtpRepository;
 import java.util.Random;
 
 @Service
-public class SmsOtpServiceImpl implements SmsOtpService
+public class SmsOtpServiceImpl extends Thread implements SmsOtpService
 {
 
-    //*****9****4***000000000000
-    // aan ACb3c4fe3afb030fc4975038ed771356
+    // aan ACb3c4fe3afb030fc4975038ed77135694
     // 0daa8a0588e12aa01507690d0ac8fc61
 
-    //*****0****0***000000000000
-    //eduardus AC215bf02aef9c9f5534e8da999e182f
+    //eduardus AC215bf02aef9c9f5534e8da999e182f00
     // ceb6c45a047285eb21ea36a8b43abdd2
     // +12057549917
 
-    //*****2****8***000000000000
-    // Asti AC23886956f90a67a68538383ef1c6c0
+    // Asti AC23886956f90a67a68538383ef1c6c028
     //3f0f1fd0dfe3cb476af04a91f3782208
     //+12019756910
 
-    public static final String ACCOUNT_SID = "ACb3c4fe3afb03*0fc4975038ed7713569*";
-    public static final String AUTH_TOKEN = "0daa8a0588e1*2aa0150*7690d0ac8fc6*";
+    public static final String ACCOUNT_SID = "ACb3c4fe3afb030fc4975038ed77135694";
+    public static final String AUTH_TOKEN = "d53e919b28592508299ebedd054a64f9";
 
     @Autowired
     private SmsOtpRepository smsOtpRepository;
@@ -52,10 +49,44 @@ public class SmsOtpServiceImpl implements SmsOtpService
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Message message = Message.creator(
                 new com.twilio.type.PhoneNumber(noTelepon),
-                new com.twilio.type.PhoneNumber("+19416*7697*43"),
+                new com.twilio.type.PhoneNumber("+19416769743"),
                 "Your Otp is "+ otp)
                 .create();
 
         return message;
+    }
+
+    @Override
+    public boolean countDownt() {
+
+        Long i = 10L;
+        Long a = 0L;
+        boolean status = false;
+        while (i>0){
+            System.out.println("Remaining: "+i+" seconds");
+            try {
+                i--;
+                Thread.sleep(1000L);    // 1000L = 1000ms = 1 second
+            }
+            catch (InterruptedException e) { e.printStackTrace();}
+            if (i == 0)
+            {
+                a =0L;
+            }
+
+        }
+
+        if (a != 0)
+        {
+            status =true;
+        } else {
+            status = false;
+        }
+        return status;
+    }
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread();
+
     }
 }
