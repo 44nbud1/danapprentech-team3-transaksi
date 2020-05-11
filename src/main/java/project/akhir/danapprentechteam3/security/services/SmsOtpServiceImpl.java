@@ -13,19 +13,22 @@ import java.util.Random;
 public class SmsOtpServiceImpl implements SmsOtpService
 {
 
-    // aan ACb3c4fe3afb030fc4975038ed77135694
+    //*****9****4***000000000000
+    // aan ACb3c4fe3afb030fc4975038ed771356
     // 0daa8a0588e12aa01507690d0ac8fc61
 
-    //eduardus AC215bf02aef9c9f5534e8da999e182f00
+    //*****0****0***000000000000
+    //eduardus AC215bf02aef9c9f5534e8da999e182f
     // ceb6c45a047285eb21ea36a8b43abdd2
     // +12057549917
 
-    // Asti AC23886956f90a67a68538383ef1c6c028
+    //*****2****8***000000000000
+    // Asti AC23886956f90a67a68538383ef1c6c0
     //3f0f1fd0dfe3cb476af04a91f3782208
     //+12019756910
 
-    public static final String ACCOUNT_SID = "ACb3c4fe3afb030fc4975038ed77135694";
-    public static final String AUTH_TOKEN = "0daa8a0588e12aa01507690d0ac8fc61";
+    public static final String ACCOUNT_SID = "ACb3c4fe3afb03*0fc4975038ed7713569*";
+    public static final String AUTH_TOKEN = "0daa8a0588e1*2aa0150*7690d0ac8fc6*";
 
     @Autowired
     private SmsOtpRepository smsOtpRepository;
@@ -49,7 +52,7 @@ public class SmsOtpServiceImpl implements SmsOtpService
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         Message message = Message.creator(
                 new com.twilio.type.PhoneNumber(noTelepon),
-                new com.twilio.type.PhoneNumber("+19416769743"),
+                new com.twilio.type.PhoneNumber("+19416*7697*43"),
                 "Your Otp is "+ otp)
                 .create();
 
