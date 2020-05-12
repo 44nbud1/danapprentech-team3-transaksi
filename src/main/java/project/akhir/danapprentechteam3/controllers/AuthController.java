@@ -136,7 +136,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		jwtResponse.setEmail(userDetails.getEmail());
 		jwtResponse.setId(userDetails.getId());
 		jwtResponse.setUsername(userDetails.getUsername());
-		System.out.println("ini token " +token);
 		return ResponseEntity.ok((jwtResponse));
 	}
 
@@ -509,8 +508,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	}
 
 	@PostMapping("/confirmation-otp/{mobileNumber}/otp")
-	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody
-										SmsOtp smsOtp)
+	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody SmsOtp smsOtp)
 	{
 		SmsOtp otp = smsOtpRepository.findByMobileNumber(mobileNumber);
 
