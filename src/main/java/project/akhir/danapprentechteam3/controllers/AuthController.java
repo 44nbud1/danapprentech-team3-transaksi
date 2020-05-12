@@ -118,6 +118,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 //		LoginRequest login = rabbitMqCustomer.loginRequest(loginRequest);
 
 		//init password
+
+
 		plainPassword = loginRequest.getPassword();
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -125,7 +127,12 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		token = jwtUtils.generateJwtToken(authentication);
-		
+
+		if (token != null)
+		{
+			return ResponseEntity.badRequest().body((new MessageResponse("ERROR : You are Still logged in..!",
+					"400")));
+		}
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
