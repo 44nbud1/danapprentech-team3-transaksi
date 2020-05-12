@@ -306,7 +306,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	public ResponseEntity<?> confirmationUserAccount(@PathVariable("token")String token)
 	{
 		EmailOtp emailOtp = emailVerify.findByCodeVerify(token);
-		SmsOtp smsOtp = smsOtpRepository.findByIdSmsOtp(emailOtp.getIdEmailOtp());
+		SmsOtp smsOtp = smsOtpRepository.findByMobileNumber(emailOtp.getMobileNumber());
 
 		if (emailOtp != null)
 		{
@@ -512,7 +512,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody SmsOtp smsOtp)
 	{
 		SmsOtp otpNumber = smsOtpRepository.findByMobileNumber(mobileNumber);
-		EmailOtp emailOtp = emailVerify.findByIdEmailOtp(smsOtp.getIdSmsOtp());
+		EmailOtp emailOtp = emailVerify.findByMobileNumber(mobileNumber);
 
 		System.out.println(otpNumber);
 		System.out.println(otpNumber.getStatusOtp());

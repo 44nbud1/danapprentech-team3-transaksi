@@ -15,6 +15,7 @@ public class SmsOtp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSmsOtp;
     private String codeOtp;
+    private String email;
     private String mobileNumber;
     private Boolean statusOtp;
 
