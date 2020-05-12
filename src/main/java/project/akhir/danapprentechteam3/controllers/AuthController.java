@@ -308,8 +308,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.ok(new MessageResponse("Token Not Found","404"));
 		}
 
-		if (token != null && count < 1)
-		{
+//		if (token != null && count < 1)
+//		{
 			count ++;
 			SmsOtp otp = smsOtpRepository.findByCodeOtp(token);
 
@@ -328,10 +328,10 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 			return ResponseEntity.ok(userRepository.save(user));
 
-		} else
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","400"));
-		}
+//		} else
+//		{
+//			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","400"));
+//		}
 	}
 
 	@PostMapping("/signout")
@@ -489,7 +489,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
 		}
 
-		if (forgotPassword.getOtp() != null && countForgotPassword < 1) {
+//		if (forgotPassword.getOtp() != null && countForgotPassword < 1)
+//		{
 			countForgotPassword++;
 			User user = userRepository.findByNoTelepon(mobileNumber);
 			user.setPassword(encoder.encode(forgotPassword.getNewPassword()));
@@ -501,9 +502,9 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			//save to database
 			userRepository.save(user);
 			return ResponseEntity.ok(userRepository.save(user));
-		} else {
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The Otp is invalid or broken","400"));
-		}
+//		} else {
+//			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The Otp is invalid or broken","400"));
+//		}
 
 	}
 
