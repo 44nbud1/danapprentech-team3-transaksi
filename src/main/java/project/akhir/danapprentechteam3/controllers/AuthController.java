@@ -18,10 +18,7 @@ import project.akhir.danapprentechteam3.payload.response.MessageResponse;
 //import project.akhir.danapprentechteam3.rabbitmq.rabbitconsumer.RabbitMqConsumer;
 //import project.akhir.danapprentechteam3.rabbitmq.rabbitproducer.RabbitMqProducer;
 import project.akhir.danapprentechteam3.readdata.service.ProviderValidation;
-import project.akhir.danapprentechteam3.repository.ConfirmationTokenRepository;
-import project.akhir.danapprentechteam3.repository.ForgotPasswordRepository;
-import project.akhir.danapprentechteam3.repository.SmsOtpRepository;
-import project.akhir.danapprentechteam3.repository.UserRepository;
+import project.akhir.danapprentechteam3.repository.*;
 import project.akhir.danapprentechteam3.security.jwt.AuthEntryPointJwt;
 import project.akhir.danapprentechteam3.security.jwt.JwtUtils;
 import project.akhir.danapprentechteam3.security.passwordvalidation.PasswordAndEmailVal;
@@ -84,6 +81,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	@Autowired
 	ProviderValidation providerValidation;
 
+	@Autowired
+	EmailVerify emailVerify;
 //	@Autowired
 //	RabbitMqConsumer rabbitMqCustomer;
 
@@ -271,17 +270,15 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		namaUser = signUpRequest.getNamaUser();
 		password = encoder.encode(signUpRequest.getPassword());
 		//if false detele token if ever ask verify
-		confirmationTokenRepository.deleteByConfirmationToken(token);
+//		confirmationTokenRepository.deleteByConfirmationToken(token);
 
 		// email verify
-		signupKeyVal = signUpRequest.getNoTelepon();
-		EmailVerification confirmationToken = new EmailVerification();
-		confirmationToken.setStatusEmail(true);
-		confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
-		confirmationToken.setCreatedDate(new Date());
-		this.signUpMap.put(signupKeyVal,confirmationToken);
-//
-		confirmationTokenRepository.save(confirmationToken);
+		EmailOtp emailOtp = new EmailOtp();
+		emailOtp.setEmail(signUpRequest.getEmail());
+		emailOtp.setCodeVerify(UUID.randomUUID().toString());
+		emailOtp.setStatusEmailVerify(Boolean.TRUE);
+		emailVerify.save(emailOtp);
+//		confirmationTokenRepository.save(confirmationToken);
 
 		// email verify
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -289,7 +286,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		mailMessage.setSubject("Test test");
 		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
 		mailMessage.setText("To confirm "+"https://testing-connection-coba.herokuapp.com/api/auth/confirmation-account/"+
-				signUpMap.get(signupKeyVal).getConfirmationToken());
+				emailOtp.getCodeVerify());
 		emailSenderService.sendEmail(mailMessage);
 
 		SmsOtp otp = new SmsOtp();
@@ -297,29 +294,28 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 //		otp.setMobileNumber("+6285777488828");// dummy
 		otp.setCodeOtp(smsOtpService.createOtp());
 //		otp.setCodeOtp("0657"); // dummy
+		otp.setStatusOtp(Boolean.TRUE);
 		smsOtpRepository.save(otp);
 //
 //		smsOtpService.sendSMS(signUpRequest.getNoTelepon(), otp.getCodeOtp());
 
-		statusVerifyEmail = true;
 		return ResponseEntity.ok(new MessageResponse(otp.getCodeOtp()+ " your otp "+otp.getCodeOtp(),"200"));
 	}
 
 	@GetMapping("/confirmation-account/{token}")
 	public ResponseEntity<?> confirmationUserAccount(@PathVariable("token")String token)
 	{
-		EmailVerification tokens = confirmationTokenRepository.findByConfirmationToken(token);
+		EmailOtp emailOtp = emailVerify.findByCodeVerify(token);
+		User cekUser = userRepository.findByEmail(emailOtp.getEmail());
+		SmsOtp smsOtp = smsOtpRepository.findByMobileNumber(cekUser.getNoTelepon());
 
-		if (!(token.equalsIgnoreCase(tokens.getConfirmationToken())))
+		if (emailOtp != null)
 		{
 			return ResponseEntity.ok(new MessageResponse("Token Not Found","404"));
 		}
 
-//		if (token != null && count < 1)
-//		{
-			count ++;
-			SmsOtp otp = smsOtpRepository.findByCodeOtp(token);
-
+		if (smsOtp.getStatusOtp() == Boolean.TRUE && emailOtp.getStatusEmailVerify() == Boolean.TRUE )
+		{
 			//parse +62 -> 08
 			// Create new user's account and encode password
 			User user = new User();
@@ -332,23 +328,21 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setMessage("signup is successfully");
 
 			userRepository.save(user);
+			emailOtp.setStatusEmailVerify(Boolean.FALSE);
+			smsOtp.setStatusOtp(Boolean.FALSE);
 
+			smsOtpRepository.save(smsOtp);
+			emailVerify.save(emailOtp);
 			return ResponseEntity.ok(userRepository.save(user));
 
-//		} else
-//		{
-//			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","400"));
-//		}
+		} else
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","400"));
+		}
 	}
 
 	@PostMapping("/signout")
 	public ResponseEntity<?> logoutUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-		// send to rabbit
-//		rabbitMqProducer.logouSendRabbit(loginRequest);
-
-		// take from rabbit
-//		LoginRequest logout = rabbitMqCustomer.logoutRequest(loginRequest);
 
 		User us = userRepository.findByNoTelepon(loginRequest.getNoTelepon());
 
@@ -518,21 +512,18 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	@PostMapping("/confirmation-otp/{mobileNumber}/otp")
 	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody SmsOtp smsOtp)
 	{
-		SmsOtp otp = smsOtpRepository.findByMobileNumber(mobileNumber);
+		SmsOtp otpNumber = smsOtpRepository.findByMobileNumber(mobileNumber);
+		User cekUser = userRepository.findByNoTelepon(mobileNumber);
+		EmailOtp emailOtp = emailVerify.findByEmail(cekUser.getEmail());
 
 		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0)
 		{
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
 		}
 
-		if (!otp.getMobileNumber().equalsIgnoreCase(mobileNumber))
+		if (! otpNumber.getMobileNumber().equalsIgnoreCase(mobileNumber))
 		{
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Mobile number not found", "400"));
-		}
-
-		if (otp == null)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please Cek", "400"));
 		}
 
 		if (!smsOtp.getStatusOtp())
@@ -540,8 +531,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
 		}
 
-		if (smsOtp.getCodeOtp() != null && count < 1) {
-			count++;
+		if (emailOtp.getStatusEmailVerify() == Boolean.TRUE && smsOtp.getStatusOtp() == Boolean.TRUE) {
 			//parse +62 -> 08
 			// Create new user's account and encode password
 			User user = new User();
@@ -554,9 +544,13 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setMessage("signup is successfully");
 			user.setCreatedDate(new Date());
 			user.setUpdatedDate(new Date());
-			otp.setStatusOtp(Boolean.TRUE);
-			smsOtpRepository.save(otp);
 			//save to database
+			otpNumber.setStatusOtp(Boolean.FALSE);
+			emailOtp.setStatusEmailVerify(Boolean.FALSE);
+
+			smsOtpRepository.save(otpNumber);
+			emailVerify.save(emailOtp);
+
 			userRepository.save(user);
 			return ResponseEntity.ok(userRepository.save(user));
 		} else {
