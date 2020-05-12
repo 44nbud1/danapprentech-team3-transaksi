@@ -14,7 +14,7 @@ public class EmailOtp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idEmailOtp;
     private String codeVerify;
     private String email;
     private Boolean statusEmailVerify;

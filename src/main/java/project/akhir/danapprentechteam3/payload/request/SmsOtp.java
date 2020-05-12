@@ -13,7 +13,7 @@ public class SmsOtp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idSmsOtp;
     private String codeOtp;
     private String mobileNumber;
     private Boolean statusOtp;
