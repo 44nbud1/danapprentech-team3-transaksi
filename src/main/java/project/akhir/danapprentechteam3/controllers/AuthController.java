@@ -514,6 +514,12 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		SmsOtp otpNumber = smsOtpRepository.findByMobileNumber(mobileNumber);
 		EmailOtp emailOtp = emailVerify.findByIdEmailOtp(smsOtp.getIdSmsOtp());
 
+		System.out.println(otpNumber);
+		System.out.println(otpNumber.getStatusOtp());
+		System.out.println(otpNumber);
+		System.out.println(emailOtp);
+		System.out.println(emailOtp.getCodeVerify());
+
 		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0)
 		{
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
