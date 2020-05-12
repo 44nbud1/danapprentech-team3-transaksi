@@ -277,6 +277,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		emailOtp.setEmail(signUpRequest.getEmail());
 		emailOtp.setCodeVerify(UUID.randomUUID().toString());
 		emailOtp.setStatusEmailVerify(Boolean.TRUE);
+		emailOtp.setMobileNumber(signUpRequest.getNoTelepon());
 		emailVerify.save(emailOtp);
 //		confirmationTokenRepository.save(confirmationToken);
 
@@ -295,6 +296,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		otp.setCodeOtp(smsOtpService.createOtp());
 //		otp.setCodeOtp("0657"); // dummy
 		otp.setStatusOtp(Boolean.TRUE);
+		otp.setEmail(signUpRequest.getEmail());
 		smsOtpRepository.save(otp);
 //
 //		smsOtpService.sendSMS(signUpRequest.getNoTelepon(), otp.getCodeOtp());
@@ -514,11 +516,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		SmsOtp otpNumber = smsOtpRepository.findByMobileNumber(mobileNumber);
 		EmailOtp emailOtp = emailVerify.findByMobileNumber(mobileNumber);
 
-		System.out.println(otpNumber);
-		System.out.println(otpNumber.getStatusOtp());
-		System.out.println(otpNumber);
-		System.out.println(emailOtp);
-		System.out.println(emailOtp.getCodeVerify());
 
 		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0)
 		{
