@@ -523,16 +523,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
 		}
 
-		if (! otpNumber.getMobileNumber().equalsIgnoreCase(mobileNumber))
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Mobile number not found", "400"));
-		}
-
-		if (!smsOtp.getStatusOtp())
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
-		}
-
 		if (emailOtp.getStatusEmailVerify() == Boolean.TRUE && otpNumber.getStatusOtp() == Boolean.TRUE) {
 			System.out.println(emailOtp.getCodeVerify());
 			//parse +62 -> 08
