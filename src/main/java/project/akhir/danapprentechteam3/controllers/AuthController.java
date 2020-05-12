@@ -289,14 +289,14 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		SmsOtp otp = new SmsOtp();
 		otp.setMobileNumber(signUpRequest.getNoTelepon());
 //		otp.setMobileNumber("+6285777488828");// dummy
-//		otp.setCodeOtp(smsOtpService.createOtp());
-		otp.setCodeOtp("0657"); // dummy
+		otp.setCodeOtp(smsOtpService.createOtp());
+//		otp.setCodeOtp("0657"); // dummy
 		smsOtpRepository.save(otp);
 //
 //		smsOtpService.sendSMS(signUpRequest.getNoTelepon(), otp.getCodeOtp());
 
 		statusVerifyEmail = true;
-		return ResponseEntity.ok(new MessageResponse("Please check Email or your Phone numer...","200"));
+		return ResponseEntity.ok(new MessageResponse("your otp "+otp.getCodeOtp(),"200"));
 	}
 
 	@PostMapping("/confirmation-account/{token}")
@@ -394,11 +394,11 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			SmsOtp otp = new SmsOtp();
 			otp.setMobileNumber(forgotPassword.getNoTelepon());
 //		otp.setMobileNumber("+6285777488828");// dummy
-//			otp.setCodeOtp(smsOtpService.createOtp());
-		otp.setCodeOtp("0657"); // dummy
+			otp.setCodeOtp(smsOtpService.createOtp());
+//		otp.setCodeOtp("0657"); // dummy
 			smsOtpRepository.save(otp);
 //			smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
-			return ResponseEntity.ok(new MessageResponse("Please check your email or mobile phone ..","200"));
+			return ResponseEntity.ok(new MessageResponse("your otp "+otp.getCodeOtp(),"200"));
 		}else {
 			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!","400"));
 		}
@@ -593,11 +593,11 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		SmsOtp otp = new SmsOtp();
 		otp.setMobileNumber(forgotPassword.getNoTelepon());
 //		otp.setMobileNumber("+6285777488828");// dummy
-//		otp.setCodeOtp(smsOtpService.createOtp());
-		otp.setCodeOtp("0657"); // dummy
+		otp.setCodeOtp(smsOtpService.createOtp());
+//		otp.setCodeOtp("0657"); // dummy
 		smsOtpRepository.save(otp);
 //		smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
 
-		return ResponseEntity.badRequest().body(new MessageResponse("Please check your email or mobile phone ..","400"));
+		return ResponseEntity.badRequest().body(new MessageResponse("your otp "+otp.getCodeOtp(),"400"));
 	}
 }
