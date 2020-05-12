@@ -298,7 +298,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		return ResponseEntity.ok(new MessageResponse("your otp "+otp.getCodeOtp(),"200"));
 	}
 
-	@PostMapping("/confirmation-account/{token}")
+	@GetMapping("/confirmation-account/{token}")
 	public ResponseEntity<?> confirmationUserAccount(@PathVariable("token")String token)
 	{
 		EmailVerification tokens = confirmationTokenRepository.findByConfirmationToken(token);
