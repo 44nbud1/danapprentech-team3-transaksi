@@ -302,7 +302,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 //		smsOtpService.sendSMS(signUpRequest.getNoTelepon(), otp.getCodeOtp());
 
 		statusVerifyEmail = true;
-		return ResponseEntity.ok(new MessageResponse("your otp "+otp.getCodeOtp(),"200"));
+		return ResponseEntity.ok(new MessageResponse(otp.getCodeOtp()+ " your otp "+otp.getCodeOtp(),"200"));
 	}
 
 	@GetMapping("/confirmation-account/{token}")

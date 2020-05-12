@@ -65,6 +65,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/auth/confirmation-forgotPassword/{mobileNumber}/otp").permitAll()
 				.antMatchers("/api/auth/confirmation-otp/{mobileNumber}/otp").permitAll()
 				.antMatchers("/api/auth/confirmation-otp/**").permitAll()
+				.antMatchers("/api/auth/signin").permitAll()
+				.antMatchers("/api/auth/signup").permitAll()
+				.antMatchers("/api/auth/confirmation-account/{token}").permitAll()
+				.antMatchers("/api/auth/signout").permitAll()
+				.antMatchers("/api/auth/forgot-password").permitAll()
+				.antMatchers("/api/auth/confirm-password/{token}").permitAll()
+				.antMatchers("/api/auth/change-password").permitAll()
+				.antMatchers("/api/auth/reset-password-inapplication").permitAll()
+				//"/signin"
 				//http://localhost:8080/swagger-ui.html
 			.antMatchers("/api/test/**").permitAll()
 			.anyRequest().authenticated();
