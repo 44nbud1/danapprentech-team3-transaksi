@@ -287,8 +287,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		emailSenderService.sendEmail(mailMessage);
 
 		SmsOtp otp = new SmsOtp();
-//		otp.setMobileNumber(signUpRequest.getNoTelepon());
-		otp.setMobileNumber("+6285777488828");// dummy
+		otp.setMobileNumber(signUpRequest.getNoTelepon());
+//		otp.setMobileNumber("+6285777488828");// dummy
 //		otp.setCodeOtp(smsOtpService.createOtp());
 		otp.setCodeOtp("0657"); // dummy
 		smsOtpRepository.save(otp);
@@ -392,8 +392,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 			//send phone otp
 			SmsOtp otp = new SmsOtp();
-//			otp.setMobileNumber(forgotPassword.getNoTelepon());
-		otp.setMobileNumber("+6285777488828");// dummy
+			otp.setMobileNumber(forgotPassword.getNoTelepon());
+//		otp.setMobileNumber("+6285777488828");// dummy
 //			otp.setCodeOtp(smsOtpService.createOtp());
 		otp.setCodeOtp("0657"); // dummy
 			smsOtpRepository.save(otp);
@@ -591,8 +591,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		//send phone otp
 		SmsOtp otp = new SmsOtp();
-//		otp.setMobileNumber(forgotPassword.getNoTelepon());
-		otp.setMobileNumber("+6285777488828");// dummy
+		otp.setMobileNumber(forgotPassword.getNoTelepon());
+//		otp.setMobileNumber("+6285777488828");// dummy
 //		otp.setCodeOtp(smsOtpService.createOtp());
 		otp.setCodeOtp("0657"); // dummy
 		smsOtpRepository.save(otp);
