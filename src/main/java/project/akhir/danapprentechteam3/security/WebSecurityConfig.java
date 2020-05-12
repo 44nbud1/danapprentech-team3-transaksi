@@ -61,16 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
 			.authorizeRequests()
-				.antMatchers("/api/auth/**").permitAll()
-				.antMatchers("/api/auth/signup").permitAll()
-				.antMatchers("/api/auth/signin").permitAll()
-				.antMatchers("/api/auth/confirmation-account").permitAll()
-				.antMatchers("/api/auth/forgot-password").permitAll()
-				.antMatchers("/api/auth/reset-password").permitAll()
-				.antMatchers("/api/auth/confirm-password").permitAll()
-				.antMatchers("/api/auth/pwd").permitAll()
-				.antMatchers("/api/auth/update-userpassword").permitAll()
-				.antMatchers("http://localhost:8080/swagger-ui.html").permitAll()
+				.antMatchers("/").permitAll()
 				//http://localhost:8080/swagger-ui.html
 			.antMatchers("/api/test/**").permitAll()
 			.anyRequest().authenticated();
