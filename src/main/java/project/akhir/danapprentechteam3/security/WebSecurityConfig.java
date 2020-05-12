@@ -63,6 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.antMatchers("/api/auth/signup").permitAll()
 				.antMatchers("/confirmation-forgotPassword/{mobileNumber}/otp").permitAll()
+				.antMatchers("/confirmation-otp/{mobileNumber}/otp").permitAll()
 
 				//http://localhost:8080/swagger-ui.html
 			.antMatchers("/api/test/**").permitAll()
