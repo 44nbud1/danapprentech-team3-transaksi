@@ -15,8 +15,8 @@ import project.akhir.danapprentechteam3.models.User;
 import project.akhir.danapprentechteam3.payload.request.*;
 import project.akhir.danapprentechteam3.payload.response.JwtResponse;
 import project.akhir.danapprentechteam3.payload.response.MessageResponse;
-import project.akhir.danapprentechteam3.rabbitmq.rabbitconsumer.RabbitMqConsumer;
-import project.akhir.danapprentechteam3.rabbitmq.rabbitproducer.RabbitMqProducer;
+//import project.akhir.danapprentechteam3.rabbitmq.rabbitconsumer.RabbitMqConsumer;
+//import project.akhir.danapprentechteam3.rabbitmq.rabbitproducer.RabbitMqProducer;
 import project.akhir.danapprentechteam3.readdata.service.ProviderValidation;
 import project.akhir.danapprentechteam3.repository.ConfirmationTokenRepository;
 import project.akhir.danapprentechteam3.repository.ForgotPasswordRepository;
@@ -84,11 +84,11 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	@Autowired
 	ProviderValidation providerValidation;
 
-	@Autowired
-	RabbitMqConsumer rabbitMqCustomer;
+//	@Autowired
+//	RabbitMqConsumer rabbitMqCustomer;
 
-	@Autowired
-	RabbitMqProducer rabbitMqProducer;
+//	@Autowired/
+//	RabbitMqProducer rabbitMqProducer;
 
 	@Autowired
 	EmailSenderService emailSenderService;
@@ -112,16 +112,16 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		//send to rabbi
-		rabbitMqProducer.loginSendRabbit(loginRequest);
+//		rabbitMqProducer.loginSendRabbit(loginRequest);
 
 		//take from rabbit
-		LoginRequest login = rabbitMqCustomer.loginRequest(loginRequest);
+//		LoginRequest login = rabbitMqCustomer.loginRequest(loginRequest);
 
 		//init password
 		plainPassword = loginRequest.getPassword();
 
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(login.getNoTelepon(), login.getPassword()));
+				new UsernamePasswordAuthenticationToken(loginRequest.getNoTelepon(), loginRequest.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		token = jwtUtils.generateJwtToken(authentication);
@@ -148,24 +148,24 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws IOException, TimeoutException {
 
 		// send data to rabbit mq
-		rabbitMqProducer.signupSendRabbit(signUpRequest);
+//		rabbitMqProducer.signupSendRabbit(signUpRequest);
 		logger.info("Send data to rabbit Mq");
 
 		// take data from rabbit mq
-		SignupRequest signup = rabbitMqCustomer.recievedMessage(signUpRequest);
+//		SignupRequest signup = rabbitMqCustomer.recievedMessage(signUpRequest);
 
 		logger.info("take data from rabbit mq");
+//
+//		if (!providerValidation.validasiProvider(signup.getNoTelepon()))
+//		{
+//			logger.info("ERROR : Username is not registered with the service provider!");
+//			return ResponseEntity
+//					.badRequest()
+//					.body(new MessageResponse("ERROR : Phone number is not registered with the service provider!",
+//							"400"));
+//		}
 
-		if (!providerValidation.validasiProvider(signup.getNoTelepon()))
-		{
-			logger.info("ERROR : Username is not registered with the service provider!");
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("ERROR : Phone number is not registered with the service provider!",
-							"400"));
-		}
-
-		if (userRepository.existsByNoTelepon(signup.getNoTelepon())) {
+		if (userRepository.existsByNoTelepon(signUpRequest.getNoTelepon())) {
 			logger.info("ERROR : Username is already taken!");
 			return ResponseEntity
 					.badRequest()
@@ -173,7 +173,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.PasswordValidatorSpace(signup.getPassword())) {
+		if (!passwordEmailVal.PasswordValidatorSpace(signUpRequest.getPassword())) {
 			logger.info("ERROR : Your password does not must contains white space...");
 			return ResponseEntity
 					.badRequest()
@@ -181,7 +181,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.PasswordValidatorLowercase(signup.getPassword()))
+		if (!passwordEmailVal.PasswordValidatorLowercase(signUpRequest.getPassword()))
 		{
 			logger.info("ERROR : Your password must contains one lowercase characters...");
 			return ResponseEntity
@@ -190,7 +190,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.PasswordValidatorUpercase(signup.getPassword()))
+		if (!passwordEmailVal.PasswordValidatorUpercase(signUpRequest.getPassword()))
 		{
 			logger.info("ERROR : Your password must contains one uppercase characters...");
 			return ResponseEntity
@@ -199,7 +199,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.PasswordValidatorSymbol(signup.getPassword()))
+		if (!passwordEmailVal.PasswordValidatorSymbol(signUpRequest.getPassword()))
 		{
 			logger.info("ERROR : Your password must contains one symbol characters...");
 			return ResponseEntity
@@ -208,7 +208,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.PasswordValidatorNumber(signup.getPassword()))
+		if (!passwordEmailVal.PasswordValidatorNumber(signUpRequest.getPassword()))
 		{
 			logger.info("ERROR : Your password must contains one digit from 0-9...");
 			return ResponseEntity
@@ -217,7 +217,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.EmailValidator(signup.getEmail()))
+		if (!passwordEmailVal.EmailValidator(signUpRequest.getEmail()))
 		{
 			logger.info("ERROR : Your email address is invalid....");
 			return ResponseEntity
@@ -226,7 +226,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (userRepository.existsByEmail(signup.getEmail()))
+		if (userRepository.existsByEmail(signUpRequest.getEmail()))
 		{
 			logger.info("ERROR : Email is already in use!");
 			return ResponseEntity
@@ -235,7 +235,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.confirmPassword(signup.getPassword(),signUpRequest.getConfirmPassword()))
+		if (!passwordEmailVal.confirmPassword(signUpRequest.getPassword(),signUpRequest.getConfirmPassword()))
 		{
 			logger.info("ERROR : Please check your password not Match!");
 			return ResponseEntity
@@ -245,25 +245,25 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		}
 
 		//parse +62 -> 08
-		String va = signup.getNoTelepon().substring(3,signUpRequest.getNoTelepon().length());
+		String va = signUpRequest.getNoTelepon().substring(3,signUpRequest.getNoTelepon().length());
 		// Create new user's account and encode password
 		User user = new User();
-		user.setNoTelepon(signup.getNoTelepon());
-		user.setEmail(signup.getEmail());
+		user.setNoTelepon(signUpRequest.getNoTelepon());
+		user.setEmail(signUpRequest.getEmail());
 		user.setVirtualAccount("80000"+va);
-		user.setNamaUser(signup.getNamaUser());
-		user.setPassword(encoder.encode(signup.getPassword()));
+		user.setNamaUser(signUpRequest.getNamaUser());
+		user.setPassword(encoder.encode(signUpRequest.getPassword()));
 		user.setStatus("200");
 		user.setMessage("signup is successfully");
 
 		//save to database
 //		User users = userRepository.save(user);
 
-		noTelepon = signup.getNoTelepon();
-		email = signup.getEmail();
+		noTelepon = signUpRequest.getNoTelepon();
+		email = signUpRequest.getEmail();
 		VirtualAccount = "80000"+va;
-		namaUser = signup.getNamaUser();
-		password = encoder.encode(signup.getPassword());
+		namaUser = signUpRequest.getNamaUser();
+		password = encoder.encode(signUpRequest.getPassword());
 		//if false detele token if ever ask verify
 		confirmationTokenRepository.deleteByConfirmationToken(token);
 
@@ -287,13 +287,13 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		emailSenderService.sendEmail(mailMessage);
 
 		SmsOtp otp = new SmsOtp();
-		otp.setMobileNumber(signup.getNoTelepon());
+		otp.setMobileNumber(signUpRequest.getNoTelepon());
 //		otp.setMobileNumber("+6285777488828");// dummy
 		otp.setCodeOtp(smsOtpService.createOtp());
 //		otp.setCodeOtp("0657"); // dummy
 		smsOtpRepository.save(otp);
 
-		smsOtpService.sendSMS(signup.getNoTelepon(), otp.getCodeOtp());
+		smsOtpService.sendSMS(signUpRequest.getNoTelepon(), otp.getCodeOtp());
 
 		statusVerifyEmail = true;
 		return ResponseEntity.badRequest().body(new MessageResponse("Please check Email or your Phone numer...","200"));
@@ -339,19 +339,19 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	public ResponseEntity<?> logoutUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		// send to rabbit
-		rabbitMqProducer.logouSendRabbit(loginRequest);
+//		rabbitMqProducer.logouSendRabbit(loginRequest);
 
 		// take from rabbit
-		LoginRequest logout = rabbitMqCustomer.logoutRequest(loginRequest);
+//		LoginRequest logout = rabbitMqCustomer.logoutRequest(loginRequest);
 
-		User us = userRepository.findByNoTelepon(logout.getNoTelepon());
+		User us = userRepository.findByNoTelepon(loginRequest.getNoTelepon());
 
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-				logout.getNoTelepon(), logout.getPassword());
+				loginRequest.getNoTelepon(), loginRequest.getPassword());
 
 		Authentication authentication = authenticationManager.authenticate(authRequest);
 
-		if (token != null && logout.getPassword() != null && logout.getNoTelepon() != null)
+		if (token != null && loginRequest.getPassword() != null && loginRequest.getNoTelepon() != null)
 		{
 
 			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
