@@ -529,7 +529,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
 		}
 
-		if (emailOtp.getStatusEmailVerify() == Boolean.TRUE && smsOtp.getStatusOtp() == Boolean.TRUE) {
+		if (emailOtp.getStatusEmailVerify() == Boolean.TRUE && otpNumber.getStatusOtp() == Boolean.TRUE) {
 			//parse +62 -> 08
 			// Create new user's account and encode password
 			User user = new User();
