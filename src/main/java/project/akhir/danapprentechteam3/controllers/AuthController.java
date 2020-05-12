@@ -290,6 +290,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 				emailOtp.getCodeVerify());
 		emailSenderService.sendEmail(mailMessage);
 
+		// number verify
 		SmsOtp otp = new SmsOtp();
 		otp.setMobileNumber(signUpRequest.getNoTelepon());
 //		otp.setMobileNumber("+6285777488828");// dummy
