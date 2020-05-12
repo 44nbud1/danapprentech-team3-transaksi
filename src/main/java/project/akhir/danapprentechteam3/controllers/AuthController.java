@@ -515,7 +515,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	{
 		SmsOtp otpNumber = smsOtpRepository.findByMobileNumber(mobileNumber);
 		EmailOtp emailOtp = emailVerify.findByMobileNumber(mobileNumber);
-
+		System.out.println(emailOtp);
 
 		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0)
 		{
@@ -533,6 +533,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		}
 
 		if (emailOtp.getStatusEmailVerify() == Boolean.TRUE && otpNumber.getStatusOtp() == Boolean.TRUE) {
+			System.out.println(emailOtp.getCodeVerify());
 			//parse +62 -> 08
 			// Create new user's account and encode password
 			User user = new User();
