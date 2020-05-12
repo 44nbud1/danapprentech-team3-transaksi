@@ -282,21 +282,21 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		mailMessage.setTo(signUpRequest.getEmail());
 		mailMessage.setSubject("Test test");
 		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-		mailMessage.setText("To confirm "+"http://localhost:6565/api/auth/confirmation-account/"+
+		mailMessage.setText("To confirm "+"https://testing-connection-coba.herokuapp.com/api/auth/confirmation-account/"+
 				signUpMap.get(signupKeyVal).getConfirmationToken());
 		emailSenderService.sendEmail(mailMessage);
 
-//		SmsOtp otp = new SmsOtp();
+		SmsOtp otp = new SmsOtp();
 //		otp.setMobileNumber(signUpRequest.getNoTelepon());
-////		otp.setMobileNumber("+6285777488828");// dummy
+		otp.setMobileNumber("+6285777488828");// dummy
 //		otp.setCodeOtp(smsOtpService.createOtp());
-////		otp.setCodeOtp("0657"); // dummy
-//		smsOtpRepository.save(otp);
+		otp.setCodeOtp("0657"); // dummy
+		smsOtpRepository.save(otp);
 //
 //		smsOtpService.sendSMS(signUpRequest.getNoTelepon(), otp.getCodeOtp());
 
 		statusVerifyEmail = true;
-		return ResponseEntity.badRequest().body(new MessageResponse("Please check Email or your Phone numer...","200"));
+		return ResponseEntity.ok(new MessageResponse("Please check Email or your Phone numer...","200"));
 	}
 
 	@PostMapping("/confirmation-account/{token}")
@@ -386,17 +386,17 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			mailMessage.setTo(user.getEmail());
 			mailMessage.setSubject("Test test");
 			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-			mailMessage.setText("To confirm reset password "+"http://localhost:6565/api/auth/confirm-password/"+
+			mailMessage.setText("To confirm reset password "+"https://testing-connection-coba.herokuapp.com/api/auth/confirm-password/"+
 					forgotPasswords.getToken());
 			emailSenderService.sendEmail(mailMessage);
 
 			//send phone otp
-//			SmsOtp otp = new SmsOtp();
+			SmsOtp otp = new SmsOtp();
 //			otp.setMobileNumber(forgotPassword.getNoTelepon());
-////		otp.setMobileNumber("+6285777488828");// dummy
+		otp.setMobileNumber("+6285777488828");// dummy
 //			otp.setCodeOtp(smsOtpService.createOtp());
-////		otp.setCodeOtp("0657"); // dummy
-//			smsOtpRepository.save(otp);
+		otp.setCodeOtp("0657"); // dummy
+			smsOtpRepository.save(otp);
 //			smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
 			return ResponseEntity.ok(new MessageResponse("Please check your email or mobile phone ..","200"));
 		}else {
@@ -451,12 +451,12 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			users.setUpdatedDate(new Date());
 			userRepository.save(users);
 
-//			SimpleMailMessage mailMessage = new SimpleMailMessage();
-//			mailMessage.setTo(user.getEmail());
-//			mailMessage.setSubject("Congratulation, your password has been upadated successfully!!");
-//			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-//			mailMessage.setText("Don forget your password again, Thanks");
-//			emailSenderService.sendEmail(mailMessage);
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(user.getEmail());
+			mailMessage.setSubject("Congratulation, your password has been upadated successfully!!");
+			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
+			mailMessage.setText("Don forget your password again, Thanks");
+			emailSenderService.sendEmail(mailMessage);
 
 			return ResponseEntity.ok(users);
 		}else {
@@ -493,14 +493,14 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		if (forgotPassword.getOtp() != null && countForgotPassword < 1) {
 			countForgotPassword++;
 			User user = userRepository.findByNoTelepon(mobileNumber);
-//			user.setPassword(encoder.encode(forgotPassword.getNewPassword()));
-//			user.setStatus("200");
-//			user.setMessage("Password Already updated");
-//			user.setUpdatedDate(new Date());
-//			smsotps.setStatusOtp(Boolean.TRUE);
-//			smsOtpRepository.save(smsotps);
-//			//save to database
-//			userRepository.save(user);
+			user.setPassword(encoder.encode(forgotPassword.getNewPassword()));
+			user.setStatus("200");
+			user.setMessage("Password Already updated");
+			user.setUpdatedDate(new Date());
+			smsotps.setStatusOtp(Boolean.TRUE);
+			smsOtpRepository.save(smsotps);
+			//save to database
+			userRepository.save(user);
 			return ResponseEntity.ok(userRepository.save(user));
 		} else {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The Otp is invalid or broken","400"));
@@ -585,17 +585,17 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		mailMessage.setTo(user.getEmail());
 		mailMessage.setSubject("Test test");
 		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-		mailMessage.setText("To confirm reset password "+"http://localhost:6565/api/auth/confirm-password/"+
+		mailMessage.setText("To confirm reset password "+"https://testing-connection-coba.herokuapp.com/api/auth/confirm-password/"+
 				forgotPasswords.getToken());
 		emailSenderService.sendEmail(mailMessage);
 
 		//send phone otp
-//		SmsOtp otp = new SmsOtp();
+		SmsOtp otp = new SmsOtp();
 //		otp.setMobileNumber(forgotPassword.getNoTelepon());
-////		otp.setMobileNumber("+6285777488828");// dummy
+		otp.setMobileNumber("+6285777488828");// dummy
 //		otp.setCodeOtp(smsOtpService.createOtp());
-////		otp.setCodeOtp("0657"); // dummy
-//		smsOtpRepository.save(otp);
+		otp.setCodeOtp("0657"); // dummy
+		smsOtpRepository.save(otp);
 //		smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
 
 		return ResponseEntity.badRequest().body(new MessageResponse("Please check your email or mobile phone ..","400"));
