@@ -310,7 +310,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		EmailOtp emailOtp = emailVerify.findByCodeVerify(token);
 		SmsOtp smsOtp = smsOtpRepository.findByMobileNumber(emailOtp.getMobileNumber());
 
-		if (emailOtp != null)
+		if (emailOtp == null)
 		{
 			return ResponseEntity.ok(new MessageResponse("Token Not Found","404"));
 		}
