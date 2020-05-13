@@ -60,6 +60,8 @@ public class User {
 	@Transient
 	private String status ;
 
+	private String tokenAkses;
+
 	private Long saldo = 1000000L ;
 
 	@Temporal(TemporalType.TIMESTAMP)

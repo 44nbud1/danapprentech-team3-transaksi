@@ -18,7 +18,7 @@ public class EmailOtp {
     private String codeVerify;
     private String email;
     private String mobileNumber;
-    private Boolean statusEmailVerify;
+    private boolean statusEmailVerify;
 
 }
 

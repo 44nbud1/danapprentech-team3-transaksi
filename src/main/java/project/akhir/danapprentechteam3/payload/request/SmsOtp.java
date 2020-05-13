@@ -17,6 +17,6 @@ public class SmsOtp {
     private String codeOtp;
     private String email;
     private String mobileNumber;
-    private Boolean statusOtp;
+    private boolean statusOtp;
 
 }

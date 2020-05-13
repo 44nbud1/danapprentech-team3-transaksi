@@ -11,4 +11,7 @@ public interface SmsOtpRepository extends JpaRepository<SmsOtp,Long>
    void deleteByMobileNumber(String mobileNumber);
    SmsOtp findByCodeOtp(String otp);
    SmsOtp findByEmail(String id);
+   boolean existsByMobileNumber(String mobileNumber);
+   boolean existsByEmail(String email);
+
 }

@@ -6,5 +6,9 @@ import project.akhir.danapprentechteam3.payload.request.EmailOtp;
 public interface EmailVerify extends JpaRepository<EmailOtp, Long>
 {
     EmailOtp findByCodeVerify(String code);
-    EmailOtp findByMobileNumber(String mobilrNumber);
+    EmailOtp findByMobileNumber(String mobileNumber);
+    boolean existsByEmail(String email);
+    boolean existsByMobileNumber(String mobileNumber);
+    void deleteByEmail(String Email);
+    void deleteByMobileNumber(String mobileNumber);
 }
