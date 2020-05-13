@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ProviderRepository extends JpaRepository<Provider,Integer> {
     List<Provider> findByKartu(String kartu);
+
 }

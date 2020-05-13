@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import project.akhir.danapprentechteam3.login.models.User;
 import project.akhir.danapprentechteam3.login.repository.UserRepository;
 import project.akhir.danapprentechteam3.transaksi.model.Transaksi;
-import project.akhir.danapprentechteam3.transaksi.rabbitMQ.consumer.TransaksiMessageListener;
-import project.akhir.danapprentechteam3.transaksi.rabbitMQ.producer.TransaksiMessageSender;
-import project.akhir.danapprentechteam3.transaksi.service.ServiceTransaksi;
+import project.akhir.danapprentechteam3.transaksi.model.transaksirequest.TransaksiRequest;
 import project.akhir.danapprentechteam3.transaksi.service.ServiceTransaksiImpl;
 
 import java.util.Date;
@@ -18,37 +16,31 @@ import java.util.Date;
 @RequestMapping("/api/transaksi")
 public class TransaksiController {
 
-    UserRepository userRepository;
-
     @Autowired
-    TransaksiMessageSender trxSender;
+    UserRepository userRepository;
 
     @Autowired
     ServiceTransaksiImpl serviceTransaksi;
 
-    @Autowired
-    TransaksiMessageListener trxListener;
-
     @PostMapping("/E-wallet")
-    public ResponseEntity<?> transaksiEwallet(@RequestBody User user){
+    public ResponseEntity<?> transaksiEwallet(@RequestBody TransaksiRequest request){
 
-        User dataUser = userRepository.findByNoTelepon(user.getNoTelepon());
+        User dataUser = userRepository.findByNoTelepon(request.getNoTelepon());
 
-        Transaksi transaksi = serviceTransaksi.findByNoTelepon(user.getNoTelepon());
+        System.out.println(dataUser);
 
-        transaksi.setNamaUser(dataUser.getNamaUser());
-        transaksi.setTanggal(new Date());
-        transaksi.setHarga(27000L); // seharusnya get
-        transaksi.setNamaProvider("Mentari"); // seharusnya get
-        transaksi.setPaketData("Paket-Internet-1GB"); // seharusnya get
-        transaksi.setNomorPaketData("085777488828");  // harusnya get
-        transaksi.setStatusPembayaran(true);
-        transaksi.setPembayaranMelalui("E-Wallet");
+        Transaksi transaksi = new Transaksi();
+        transaksi.setPembayaranMelalui("E-Walet");
+//        transaksi.setNomorPaketData();
+//        transaksi.setNamaUser(dataUser.getNamaUser());
 
-        if (transaksi != null)
-        {
-            return ResponseEntity.badRequest().body("Pesanan mu sudah dibayar...!");
-        }
+
+//        serviceTransaksi.saveTransaksi(transaksi);
+
+//        if (operationTransaksi.isStatusPembayaran())
+//        {
+//            return ResponseEntity.badRequest().body("Pesanan mu sudah dibayar...!");
+//        }
 
         if (dataUser.getSaldo() < transaksi.getHarga())
         {
@@ -56,7 +48,8 @@ public class TransaksiController {
         }
         dataUser.setSaldo(dataUser.getSaldo()- transaksi.getHarga());
         userRepository.save(dataUser);
-        return new ResponseEntity<>(serviceTransaksi.saveTransaksi(transaksi),HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>("sedewdseded",HttpStatus.BAD_REQUEST);
     }
 
 //    @PostMapping("/trx/va/")
@@ -82,6 +75,5 @@ public class TransaksiController {
 //        jsonObject.put("history",transaksi);
 //        return new ResponseEntity<>(jsonObject,HttpStatus.OK);
 //    }
-
 
 }
