@@ -11,6 +11,7 @@ public class CreateDataDummy implements Serializable
 {
     public static void main(String[] args)
     {
+
             JSONObject customer1 = new JSONObject();
             customer1.put("id", "1");
             customer1.put("no.telp", "+6285777488828");
