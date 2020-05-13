@@ -312,13 +312,13 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		mailMessage.setTo(signUpRequest.getEmail());
 		mailMessage.setSubject("Test test");
 		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-		mailMessage.setText("To confirm "+"http://localhost:7070/api/auth/confirmation-account/"+
+		mailMessage.setText("To confirm "+"https://testing-connection-coba.herokuapp.com/api/auth/confirmation-account/"+
 				emailOtp.getCodeVerify());
 		emailSenderService.sendEmail(mailMessage);
 
 //		smsOtpService.sendSMS(signUpRequest.getNoTelepon(), otp.getCodeOtp());
 
-		return ResponseEntity.ok(new MessageResponse(otp.getCodeOtp()+ " your otp "+otp.getCodeOtp(),"200"));
+		return ResponseEntity.ok(new MessageResponse(signUpRequest.getNoTelepon() +" ---- "+otp.getCodeOtp()+ " your otp "+otp.getCodeOtp(),"200"));
 	}
 
 	@PostMapping("/confirmation-account/{token}")
