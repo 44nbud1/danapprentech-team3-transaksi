@@ -50,6 +50,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	String VirtualAccount ;
 	String namaUser ;
 	String password ;
+	Long pinTransaksi ;
 
 	// otpVerify
 	boolean statusVerifyOtp = false;
@@ -143,6 +144,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
+
 		user.setTokenAkses(token);
 		userRepository.save(user);
 		JwtResponse jwtResponse = new JwtResponse();
@@ -274,6 +276,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		User user = new User();
 		user.setNoTelepon(signUpRequest.getNoTelepon());
 		user.setEmail(signUpRequest.getEmail());
+		user.setPinTransaksi(signUpRequest.getPinTransaksi());
 		user.setVirtualAccount("80000"+va);
 		user.setNamaUser(signUpRequest.getNamaUser());
 		user.setPassword(encoder.encode(signUpRequest.getPassword()));
@@ -285,6 +288,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		VirtualAccount = "80000"+va;
 		namaUser = signUpRequest.getNamaUser();
 		password = encoder.encode(signUpRequest.getPassword());
+		pinTransaksi = signUpRequest.getPinTransaksi();
 		//if false detele token if ever ask verify
 //		confirmationTokenRepository.deleteByConfirmationToken(token);
 
@@ -305,7 +309,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		emailOtp.setStatusEmailVerify(true);
 		emailOtp.setMobileNumber(signUpRequest.getNoTelepon());
 		emailVerify.save(emailOtp);
-
 
 		// email verify
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -343,6 +346,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setVirtualAccount(VirtualAccount);
 			user.setNamaUser(namaUser);
 			user.setPassword(password);
+			user.setPinTransaksi(pinTransaksi);
 			user.setStatus("200");
 			user.setTokenAkses(null);
 			user.setMessage("signup is successfully");
@@ -555,6 +559,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setNamaUser(namaUser);
 			user.setPassword(password);
 			user.setStatus("200");
+			user.setPinTransaksi(pinTransaksi);
 			user.setMessage("signup is successfully");
 			user.setCreatedDate(new Date());
 			user.setUpdatedDate(new Date());

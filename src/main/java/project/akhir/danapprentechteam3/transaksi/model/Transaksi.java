@@ -36,5 +36,6 @@ public class Transaksi implements Serializable{
     private String pembayaranMelalui;
     @Column(name = "status_pembayaran")
     private boolean statusPembayaran = false;
+    private Long saldoAkhir;
 
 }

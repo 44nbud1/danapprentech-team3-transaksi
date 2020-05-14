@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 public class TransaksiRequest
 {
     private String noTelepon;
+    private String virtualAccount;
+    private Long pinTransaksi;
+
 }

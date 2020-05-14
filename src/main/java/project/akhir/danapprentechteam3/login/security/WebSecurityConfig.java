@@ -74,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/auth/change-password").permitAll()
 				.antMatchers("/api/provider/cek-paket").permitAll()
 				.antMatchers("/api/transaksi/E-wallet").permitAll()
+				.antMatchers("/api/transaksi/choice").permitAll()
+				.antMatchers("/api/transaksi/virtual-account").permitAll()
 				.antMatchers("/api/auth/reset-password-inapplication").permitAll()
 				//"/signin"
 				//http://localhost:8080/swagger-ui.html

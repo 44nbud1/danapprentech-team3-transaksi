@@ -59,6 +59,8 @@ public class User {
 
 	private String tokenAkses;
 
+	private Long pinTransaksi;
+
 	private Long saldo = 1000000L ;
 
 	@Temporal(TemporalType.TIMESTAMP)

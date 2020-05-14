@@ -20,6 +20,8 @@ import java.util.Set;
 public class SignupRequest {
     @NotBlank
     private String noTelepon;
+
+    private Long pinTransaksi;
  
     @NotBlank
     private String email;
