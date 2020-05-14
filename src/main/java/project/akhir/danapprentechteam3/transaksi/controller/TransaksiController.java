@@ -50,7 +50,11 @@ public class TransaksiController {
                     "Anda Tidak memiliki transaksi", "400"));
         }
 
-        if (dataUser.getPinTransaksi() == (request.getPinTransaksi())) {
+        System.out.println(dataUser.getPinTransaksi());
+        System.out.println(request.getPinTransaksi());
+
+        if (String.valueOf(dataUser.getPinTransaksi()).equalsIgnoreCase(String.valueOf(request.getPinTransaksi())))
+        {
             Transaksi transaksi = new Transaksi();
             transaksi.setPembayaranMelalui("E-Walet");
             transaksi.setNomorPaketData(choice.getNomorPaketData());
@@ -72,7 +76,7 @@ public class TransaksiController {
                 return ResponseEntity.badRequest().body(new MessageResponse(
                         "Pesanan mu sudah dibayar", "400"));
             }
-
+            transaksi.setSaldoAkhir(dataUser.getSaldo() - transaksi.getHarga());
             choice.setStatusTransaksi(true);
             customerChoiceRepository.save(choice);
             transaksi.setStatusPembayaran(true);
@@ -99,7 +103,7 @@ public class TransaksiController {
                     "Anda Tidak memiliki transaksi", "400"));
         }
 
-    if (dataUser.getVirtualAccount().equals(request.getVirtualAccount())) {
+    if ((dataUser.getVirtualAccount().equals(request.getVirtualAccount()))) {
         Transaksi transaksi = new Transaksi();
         transaksi.setPembayaranMelalui("M-Banking");
         transaksi.setNomorPaketData(choice.getNomorPaketData());
