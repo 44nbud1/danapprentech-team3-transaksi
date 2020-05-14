@@ -1,10 +1,16 @@
 package project.akhir.danapprentechteam3.transaksi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import project.akhir.danapprentechteam3.login.models.User;
 import project.akhir.danapprentechteam3.login.payload.response.MessageResponse;
 import project.akhir.danapprentechteam3.login.repository.UserRepository;
@@ -15,6 +21,9 @@ import project.akhir.danapprentechteam3.transaksi.repository.TransaksiRepository
 import project.akhir.danapprentechteam3.transaksi.service.CustomerChoiceRepository;
 import project.akhir.danapprentechteam3.transaksi.service.CustomerChoiceService;
 import project.akhir.danapprentechteam3.transaksi.service.ServiceTransaksiImpl;
+import project.akhir.danapprentechteam3.transaksi.uploadfile.model.DBFile;
+import project.akhir.danapprentechteam3.transaksi.uploadfile.service.DBFileStorageService;
+
 
 import java.util.Date;
 
@@ -38,6 +47,9 @@ public class TransaksiController {
     @Autowired
     CustomerChoiceService customerChoiceService;
 
+    @Autowired
+    DBFileStorageService dbFileStorageService;
+
     @PostMapping("/E-wallet")
     public ResponseEntity<?> transaksiEwallet(@RequestBody TransaksiRequest request){
 
@@ -45,6 +57,12 @@ public class TransaksiController {
         CustomerChoice choice = customerChoiceRepository.findByNoTelepon(request.getNoTelepon());
 
         if (dataUser == null)
+        {
+            return ResponseEntity.badRequest().body(new MessageResponse(
+                    "Anda Tidak memiliki transaksi", "400"));
+        }
+
+        if (choice == null)
         {
             return ResponseEntity.badRequest().body(new MessageResponse(
                     "Anda Tidak memiliki transaksi", "400"));
@@ -91,6 +109,40 @@ public class TransaksiController {
         }
     }
 
+    @PostMapping("/uploadPhoto")
+    private ResponseEntity<?> uploadFileResponse(@RequestParam("file") MultipartFile file,@RequestBody Transaksi transaksi){
+        DBFile dbFile = dbFileStorageService.storeFile(file);
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/transaksi/downloadFile/")
+                .path(String.valueOf(dbFile.getId()))
+                .toUriString();
+
+        if (fileDownloadUri == null)
+        {
+            return new ResponseEntity<>(new MessageResponse("Proccess upload failed .. ! " +
+                    "please try again","400"), HttpStatus.BAD_REQUEST);
+        }
+
+        Transaksi transaksis = transaksiRepository.findByNomorTeleponUser(transaksi.getNomorTeleponUser());
+        transaksis.setStatusUpload(true);
+        transaksiRepository.save(transaksis);
+
+        return new ResponseEntity<>(new MessageResponse("Proccess upload successfully"
+                ,"200"), HttpStatus.OK);
+    }
+
+    @GetMapping("/downloadFile/{fileId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
+        // Load file from database
+        DBFile dbFile = dbFileStorageService.getFile(fileId);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(dbFile.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbFile.getFileName() + "\"")
+                .body(new ByteArrayResource(dbFile.getData()));
+    }
+
     @PostMapping("/virtual-account")
     public ResponseEntity<?> transaksiVA(@RequestBody TransaksiRequest request){
 
@@ -112,7 +164,7 @@ public class TransaksiController {
         transaksi.setNamaProvider(choice.getNamaProvider());
         transaksi.setNomorTeleponUser(request.getNoTelepon());
         transaksi.setPaketData(choice.getPaketData());
-        transaksi.setNomorPaketData("09774957495");
+        transaksi.setNomorPaketData(choice.getNomorPaketData());
         transaksi.isStatusPembayaran();
         transaksi.setTanggal(new Date());
 
@@ -124,6 +176,11 @@ public class TransaksiController {
         if (choice.isStatusTransaksi()) {
             return ResponseEntity.badRequest().body(new MessageResponse(
                     "Pesanan mu sudah dibayar", "400"));
+        }
+
+        if (transaksi.isStatusUpload() == false) {
+            return ResponseEntity.badRequest().body(new MessageResponse(
+                    "Upload Bukti pembayaran", "400"));
         }
 
         choice.setStatusTransaksi(true);

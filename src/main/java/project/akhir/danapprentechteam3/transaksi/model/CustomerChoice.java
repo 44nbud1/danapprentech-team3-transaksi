@@ -26,7 +26,6 @@ public class CustomerChoice
     private Date waktuTransaksi;
     private boolean statusTransaksi = false;
     private String nomorPaketData;
-
     
 
     /*

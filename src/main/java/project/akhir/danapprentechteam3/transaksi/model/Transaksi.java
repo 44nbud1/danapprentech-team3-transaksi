@@ -37,5 +37,5 @@ public class Transaksi implements Serializable{
     @Column(name = "status_pembayaran")
     private boolean statusPembayaran = false;
     private Long saldoAkhir;
-
+    private boolean statusUpload = false;
 }

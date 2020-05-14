@@ -148,6 +148,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		user.setTokenAkses(token);
 		userRepository.save(user);
 		JwtResponse jwtResponse = new JwtResponse();
+		jwtResponse.setSaldo(user.getSaldo());
 		jwtResponse.setToken(token);
 		jwtResponse.setEmail(userDetails.getEmail());
 		jwtResponse.setId(userDetails.getId());

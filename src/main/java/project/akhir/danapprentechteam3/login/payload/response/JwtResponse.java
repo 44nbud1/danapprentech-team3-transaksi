@@ -10,5 +10,6 @@ public class JwtResponse {
 	private Long id;
 	private String username;
 	private String email;
+	private Long saldo;
 
 }
