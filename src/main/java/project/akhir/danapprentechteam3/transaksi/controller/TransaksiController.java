@@ -146,11 +146,11 @@ public class TransaksiController {
             return ResponseEntity.badRequest().body(new MessageResponse(
                     "Pesanan mu sudah dibayar", "400"));
         }
-
-        if (transaksi.isStatusUpload() == false) {
-            return ResponseEntity.badRequest().body(new MessageResponse(
-                    "Please , Upload Bukti pembayaran", "400"));
-        }
+//
+//        if (transaksi.isStatusUpload() == false) {
+//            return ResponseEntity.badRequest().body(new MessageResponse(
+//                    "Please , Upload Bukti pembayaran", "400"));
+//        }
 
         choice.setStatusTransaksi(true);
         customerChoiceRepository.save(choice);
