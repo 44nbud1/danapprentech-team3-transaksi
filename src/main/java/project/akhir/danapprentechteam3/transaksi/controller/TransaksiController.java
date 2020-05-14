@@ -1,5 +1,6 @@
 package project.akhir.danapprentechteam3.transaksi.controller;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -22,6 +23,7 @@ import project.akhir.danapprentechteam3.transaksi.service.CustomerChoiceReposito
 import project.akhir.danapprentechteam3.transaksi.service.CustomerChoiceService;
 import project.akhir.danapprentechteam3.transaksi.service.ServiceTransaksiImpl;
 import project.akhir.danapprentechteam3.transaksi.uploadfile.model.DBFile;
+import project.akhir.danapprentechteam3.transaksi.uploadfile.payload.UploadFileResponse;
 import project.akhir.danapprentechteam3.transaksi.uploadfile.service.DBFileStorageService;
 
 
@@ -94,6 +96,7 @@ public class TransaksiController {
                 return ResponseEntity.badRequest().body(new MessageResponse(
                         "Pesanan mu sudah dibayar", "400"));
             }
+
             transaksi.setSaldoAkhir(dataUser.getSaldo() - transaksi.getHarga());
             choice.setStatusTransaksi(true);
             customerChoiceRepository.save(choice);
@@ -107,40 +110,6 @@ public class TransaksiController {
             return new ResponseEntity<>(new MessageResponse("Wrong Transaction Pin, Please" +
                     " try again","400"), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @PostMapping("/uploadPhoto")
-    private ResponseEntity<?> uploadFileResponse(@RequestParam("file") MultipartFile file,@RequestBody Transaksi transaksi){
-        DBFile dbFile = dbFileStorageService.storeFile(file);
-
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/transaksi/downloadFile/")
-                .path(String.valueOf(dbFile.getId()))
-                .toUriString();
-
-        if (fileDownloadUri == null)
-        {
-            return new ResponseEntity<>(new MessageResponse("Proccess upload failed .. ! " +
-                    "please try again","400"), HttpStatus.BAD_REQUEST);
-        }
-
-        Transaksi transaksis = transaksiRepository.findByNomorTeleponUser(transaksi.getNomorTeleponUser());
-        transaksis.setStatusUpload(true);
-        transaksiRepository.save(transaksis);
-
-        return new ResponseEntity<>(new MessageResponse("Proccess upload successfully"
-                ,"200"), HttpStatus.OK);
-    }
-
-    @GetMapping("/downloadFile/{fileId}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
-        // Load file from database
-        DBFile dbFile = dbFileStorageService.getFile(fileId);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(dbFile.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbFile.getFileName() + "\"")
-                .body(new ByteArrayResource(dbFile.getData()));
     }
 
     @PostMapping("/virtual-account")
@@ -180,7 +149,7 @@ public class TransaksiController {
 
         if (transaksi.isStatusUpload() == false) {
             return ResponseEntity.badRequest().body(new MessageResponse(
-                    "Upload Bukti pembayaran", "400"));
+                    "Please , Upload Bukti pembayaran", "400"));
         }
 
         choice.setStatusTransaksi(true);
@@ -193,7 +162,7 @@ public class TransaksiController {
         transaksiRepository.save(transaksi);
         userRepository.save(dataUser);
 
-        return new ResponseEntity<>(transaksi, HttpStatus.OK);
+        return ResponseEntity.ok(new MessageResponse("Transaction successfully, please upload photo transaction","200"));
     } else {
             return new ResponseEntity<>(new MessageResponse("Wrong Virtual Account, Please" +
                     " try again","400"), HttpStatus.BAD_REQUEST);
@@ -236,4 +205,74 @@ public class TransaksiController {
 
         return new ResponseEntity<>(transaksi,HttpStatus.OK);
     }
+
+
+//    @PostMapping("/virtual-account")
+//    public ResponseEntity<?> transaksiVirtualAccount(@RequestBody TransaksiRequest request)
+//    {
+//
+//        User dataUser = userRepository.findByNoTelepon(request.getNoTelepon());
+//        CustomerChoice choice = customerChoiceRepository.findByNoTelepon(request.getNoTelepon());
+//        if (String.valueOf(dataUser.getPinTransaksi()).equalsIgnoreCase(String.valueOf(request.getPinTransaksi())))
+//        {
+//            if (dataUser == null)
+//            {
+//                return ResponseEntity.badRequest().body(new MessageResponse(
+//                        "Anda Tidak memiliki transaksi", "400"));
+//            }
+//
+//
+//            if (dataUser.getSaldo() < choice.getHarga())
+//            {
+//                return ResponseEntity.badRequest().body(new MessageResponse(
+//                        "Saldomu kurang silakan isi ulang saldo mu sekarang", "400"));
+//            }
+//
+//            if (choice.isStatusTransaksi())
+//            {
+//                return ResponseEntity.badRequest().body(new MessageResponse(
+//                        "Pesanan mu sudah dibayar", "400"));
+//            }
+//
+//            return ResponseEntity.ok(new MessageResponse("Transaction successfully, please upload photo transaction","200"));
+//        } else {
+//            return new ResponseEntity<>(new MessageResponse("Wrong Virtual Account, Please" +
+//                    " try again","400"), HttpStatus.BAD_REQUEST);
+//        }
+//
+//    }
+
+//    @PostMapping("/buktipembayaran/")
+    @RequestMapping(value = "/buktipembayaran" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
+    private ResponseEntity<?> uploadFileResponse(@RequestParam("file") MultipartFile file)
+    {
+
+        DBFile dbFile = dbFileStorageService.storeFile(file);
+
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/transaksi-upload-photo/downloadFile/")
+                .path(String.valueOf(dbFile.getId()))
+                .toUriString();
+        if (fileDownloadUri == null)
+        {
+            return new ResponseEntity<>(new MessageResponse("Wrong Virtual Account, Please" +
+                    " try again","400"), HttpStatus.BAD_REQUEST);
+        }
+
+
+        return new ResponseEntity<>(new MessageResponse("Transaction Successfully","200"),HttpStatus.OK);
+    }
+
+    @GetMapping("/downloadFile/{fileId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
+        // Load file from database
+        DBFile dbFile = dbFileStorageService.getFile(fileId);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(dbFile.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbFile.getFileName() + "\"")
+                .body(new ByteArrayResource(dbFile.getData()));
+    }
+
 }

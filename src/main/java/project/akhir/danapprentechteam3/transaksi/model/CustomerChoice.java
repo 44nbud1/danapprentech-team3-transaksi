@@ -26,12 +26,5 @@ public class CustomerChoice
     private Date waktuTransaksi;
     private boolean statusTransaksi = false;
     private String nomorPaketData;
-    
 
-    /*
-             "nama_provider": "SmartFren",
-            "harga": "27000",
-            "id": "1",
-            "paket_data": "Paket-Internet-1GB"
-     */
 }

@@ -22,9 +22,11 @@ public class ServiceTransaksiImpl  implements ServiceTransaksi
     }
 
     @Override
-    public Transaksi findByNoTelepon(String noTelepon) {
+    public Transaksi findByNoTelepon(String noTelepon)
+    {
         return findByNoTelepon(noTelepon);
     }
+
 
 
 }

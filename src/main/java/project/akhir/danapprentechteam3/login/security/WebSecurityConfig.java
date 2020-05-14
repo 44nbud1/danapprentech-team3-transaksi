@@ -77,8 +77,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/transaksi/choice").permitAll()
 				.antMatchers("/api/transaksi/uploadPhoto").permitAll()
 				.antMatchers("/api/transaksi/virtual-account").permitAll()
-				.antMatchers("/api/transaksi/downloadFile/{fileId}").permitAll()
-				.antMatchers("/api/transaksi/downloadFile/**").permitAll()
+				.antMatchers("/api/transaksi/buktipembayaran/").permitAll()
+				.antMatchers("/api/transaksi-upload-photo/buktipembayaran").permitAll()
+				.antMatchers("/api/transaksi-upload-photo/downloadFile/**").permitAll()
 				.antMatchers("/api/auth/reset-password-inapplication").permitAll()
 				//"/signin"
 				//http://localhost:8080/swagger-ui.html

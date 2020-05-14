@@ -1,4 +1,5 @@
 package project.akhir.danapprentechteam3.transaksi.uploadfile.model;
+
 import javax.persistence.*;
 
 @Entity

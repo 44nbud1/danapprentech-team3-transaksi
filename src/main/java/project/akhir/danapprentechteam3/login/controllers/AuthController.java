@@ -379,7 +379,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		if (token != null && loginRequest.getPassword() != null && loginRequest.getNoTelepon() != null)
 		{
-
 			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
 			us.setTokenAkses(null);
