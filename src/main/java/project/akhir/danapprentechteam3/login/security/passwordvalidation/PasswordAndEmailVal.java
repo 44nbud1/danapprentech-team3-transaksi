@@ -24,8 +24,10 @@ public class PasswordAndEmailVal
             ".*[@#$%!].*";
     private static final String EMAIL_REGEX                 =
             "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
-    private static final String ALPHABET                 =
+    private static final String ALPHABET                    =
             "[a-zA-Z\\s']+";
+    private static final String ALPHABET_REGEX              =
+            "^[0-9]{6}$";
 
     public boolean PasswordValidatorLowercase(String password)
     {
@@ -76,6 +78,12 @@ public class PasswordAndEmailVal
         return matcher.matches();
     }
 
+    public boolean LengthandNumeric (Long namaUser){
+        pattern = Pattern.compile(ALPHABET_REGEX);
+        matcher = pattern.matcher(String.valueOf(namaUser));
+        return matcher.matches();
+    }
+
     public boolean Alphabetic (String namaUser){
         pattern = Pattern.compile(ALPHABET);
         matcher = pattern.matcher(namaUser);
@@ -96,6 +104,39 @@ public class PasswordAndEmailVal
         if (username.length() <= 3){
             return status = false;
         }
+        return status = true;
+    }
+
+    public boolean LengthPin (Long pinTransaksi){
+        boolean status;
+
+        String pin = String.valueOf(pinTransaksi);
+        pattern = Pattern.compile(NUMBER_ONLY);
+        matcher = pattern.matcher(pin);
+        if (pin.length() == 6){
+            return status = true;
+        } else {
+            return status = false;
+        }
+
+    }
+
+    public boolean LengthPinNumeric (Long pinTransaksi)
+
+    {
+        boolean status;
+
+        String pin = String.valueOf(pinTransaksi);
+        pattern = Pattern.compile(NUMBER_ONLY);
+        matcher = pattern.matcher(pin);
+
+        if (matcher.matches())
+        {
+            status = true;
+        } else {
+            status = false;
+        }
+
         return status = true;
     }
 

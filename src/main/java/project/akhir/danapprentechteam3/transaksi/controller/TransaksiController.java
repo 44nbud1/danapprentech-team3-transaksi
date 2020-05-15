@@ -80,12 +80,12 @@ public class TransaksiController {
             Transaksi transaksi = new Transaksi();
             transaksi.setPembayaranMelalui("E-Walet");
             transaksi.setNomorPaketData(choice.getNomorPaketData());
-            transaksi.setNamaUser("bambang");
+            transaksi.setNamaUser(dataUser.getNamaUser());
             transaksi.setHarga(choice.getHarga());
             transaksi.setNamaProvider(choice.getNamaProvider());
             transaksi.setNomorTeleponUser(request.getNoTelepon());
             transaksi.setPaketData(choice.getPaketData());
-            transaksi.setNomorPaketData("09774957495");
+            transaksi.setNomorPaketData(choice.getNomorPaketData());
             transaksi.isStatusPembayaran();
             transaksi.setTanggal(new Date());
 

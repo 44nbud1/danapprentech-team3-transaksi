@@ -153,6 +153,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		jwtResponse.setEmail(userDetails.getEmail());
 		jwtResponse.setId(userDetails.getId());
 		jwtResponse.setUsername(userDetails.getUsername());
+		jwtResponse.setStatus("200");
+		jwtResponse.setMessage("successfully");
 		return ResponseEntity.ok((jwtResponse));
 	}
 
@@ -292,7 +294,26 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			logger.info("ERROR : Your phone number must be all Alphabetic...");
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("ERROR : Your phone number must be all Alphabetic ...",
+					.body(new MessageResponse("ERROR : Your Full name must be all Alphabetic ...",
+							"400"));
+		}
+		//LengthandNumeric
+
+		if (!passwordEmailVal.LengthandNumeric(signUpRequest.getPinTransaksi()))
+		{
+			logger.info("ERROR : Your phone number must be all Alphabetic...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your pin length transaksi must be 6...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthPin(signUpRequest.getPinTransaksi()))
+		{
+			logger.info("ERROR : Your phone number must be all Alphabetic...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your pin length transaksi must be 6...",
 							"400"));
 		}
 
