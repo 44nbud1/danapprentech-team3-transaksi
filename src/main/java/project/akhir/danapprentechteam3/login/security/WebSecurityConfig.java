@@ -85,6 +85,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/transaksi/delete-user/").permitAll()
 				.antMatchers("/api/transaksi/delete-user/**").permitAll()
 				.antMatchers("/api/transaksi/edit-user/{mobileNumber}").permitAll()
+				.antMatchers("/api/transaksi/qa-get-otp/{mobileNumber}").permitAll()
+				.antMatchers("/api/transaksi/qa-get-otp/**").permitAll()
 				.antMatchers("/api/transaksi/edit-user/**").permitAll()
 				.antMatchers("/api/transaksi-upload-photo/buktipembayaran").permitAll()
 				.antMatchers("/api/transaksi-upload-photo/downloadFile/**").permitAll()

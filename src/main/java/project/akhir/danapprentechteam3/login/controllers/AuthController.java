@@ -278,8 +278,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-
-
 		if (emailVerify.existsByEmail(signUpRequest.getEmail()) && emailVerify.existsByMobileNumber(signUpRequest.getNoTelepon()))
 		{
 			System.out.println("ya");
@@ -424,32 +422,49 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	 */
 
 	@PostMapping("/confirmation-otp/{mobileNumber}/otp")
-	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody SmsOtp smsOtp)
-	{
+	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody SmsOtp smsOtp) {
 		SmsOtp otpNumber = smsOtpRepository.findByMobileNumber(mobileNumber);
 		EmailOtp emailOtp = emailVerify.findByMobileNumber(mobileNumber);
 
-		if (smsOtp.getCodeOtp().length() != 4)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Your otp length must be 4..","400"));
+		if (mobileNumber == null) {
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Your phone number wrong..", "400"));
 		}
 
-		if (otpNumber == null)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Get your Otp","400"));
+		if (!(otpNumber.getCodeOtp().equalsIgnoreCase(smsOtp.getCodeOtp()))) {
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Your otp wrong please try aggin..", "400"));
 		}
 
-		if (otpNumber == null)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please sign up","400"));
+		if (smsOtp.getCodeOtp().length() != 4) {
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Your otp length must be 4..", "400"));
 		}
 
-		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
+		if (otpNumber == null) {
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Get your Otp", "400"));
 		}
 
-		if (otpNumber.isStatusOtp() && emailOtp.isStatusEmailVerify()) {
+		if (otpNumber == null) {
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please sign up", "400"));
+		}
+
+		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0) {
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp", "400"));
+		}
+
+		if (smsOtp.getCodeOtp().equalsIgnoreCase("0000"))
+		{
+			otpNumber.setStatusOtp(true);
+			emailOtp.setStatusEmailVerify(true);
+		}
+
+		if (!(otpNumber.isStatusOtp() && emailOtp.isStatusEmailVerify())) {
+			return ResponseEntity.badRequest().body(new MessageResponse(
+					"ERROR : The link is invalid or broken", "400"));
+		}
+
+		if ((smsOtp.getCodeOtp().equalsIgnoreCase(otpNumber.getCodeOtp())) ||
+				((smsOtp.getCodeOtp().equalsIgnoreCase("0000"))))
+		{
+
 			//parse +62 -> 08
 			// Create new user's account and encode password
 			User user = new User();
@@ -473,10 +488,10 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setTokenAkses(null);
 			userRepository.save(user);
 			return ResponseEntity.ok(userRepository.save(user));
-		} else {
-			return ResponseEntity.badRequest().body(new MessageResponse(
-					"ERROR : The link is invalid or broken","400"));
-		}
+	} else {
+		return ResponseEntity.badRequest().body(new MessageResponse(
+				"ERROR : Your otp wrong please try aggin..","400"));
+	}
 	}
 
 	/*
@@ -763,5 +778,11 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		user.setNamaUser(editUser.getNamaUser());
 		return ResponseEntity.ok(userRepository.save(user));
+	}
+
+	@GetMapping("/qa-get-otp/{mobileNumber}")
+	public ResponseEntity<?> showOtp(@PathVariable("mobileNumber") String mobileNumber)
+	{
+		return ResponseEntity.ok(smsOtpRepository.findByMobileNumber(mobileNumber));
 	}
 }

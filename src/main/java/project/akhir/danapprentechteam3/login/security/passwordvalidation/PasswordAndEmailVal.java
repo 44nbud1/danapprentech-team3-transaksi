@@ -74,7 +74,7 @@ public class PasswordAndEmailVal
 
     public boolean LengthPhoneNumber (String number){
         boolean status;
-        if (number.length() >= 13){
+        if (number.length() >= 15){
             return status = false;
         }
             return status = true;

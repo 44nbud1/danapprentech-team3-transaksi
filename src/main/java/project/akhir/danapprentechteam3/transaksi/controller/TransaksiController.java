@@ -127,7 +127,7 @@ public class TransaksiController {
         Transaksi transaksi = new Transaksi();
         transaksi.setPembayaranMelalui("M-Banking");
         transaksi.setNomorPaketData(choice.getNomorPaketData());
-        transaksi.setNamaUser("bambang");
+        transaksi.setNamaUser(dataUser.getNamaUser());
         transaksi.setHarga(choice.getHarga());
         transaksi.setNamaProvider(choice.getNamaProvider());
         transaksi.setNomorTeleponUser(request.getNoTelepon());
@@ -194,7 +194,7 @@ public class TransaksiController {
         if (transaksi == null)
         {
             return ResponseEntity.badRequest().body(new MessageResponse(
-                    "Anda tidak memiliki transaksi", "400"));
+                    "You have no transactions", "400"));
         }
 
         return new ResponseEntity<>(transaksi,HttpStatus.OK);
