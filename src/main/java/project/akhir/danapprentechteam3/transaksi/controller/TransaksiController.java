@@ -26,10 +26,7 @@ import project.akhir.danapprentechteam3.transaksi.uploadfile.payload.UploadFileR
 import project.akhir.danapprentechteam3.transaksi.uploadfile.service.DBFileStorageService;
 
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Transactional
 @RestController
@@ -199,13 +196,19 @@ public class TransaksiController {
         Map<String,List<Transaksi>> history = new HashMap<>();
         history.put("history",transaksi);
 
+        List<MessageResponse> res = new ArrayList<>();
+        res.add(new MessageResponse("You have no transactions","200"));
+
+        Map<String,List<MessageResponse>> responses = new HashMap<>();
+        responses.put("history", res);
+
         if (transaksi == null)
         {
             return ResponseEntity.badRequest().body(new MessageResponse(
                     "You have no transactions", "400"));
         }
 
-        return new ResponseEntity<>(history,HttpStatus.OK);
+        return new ResponseEntity<>(responses,HttpStatus.OK);
     }
 
     @RequestMapping(value = "/buktipembayaran" , method = RequestMethod.POST, consumes = { "multipart/form-data" })

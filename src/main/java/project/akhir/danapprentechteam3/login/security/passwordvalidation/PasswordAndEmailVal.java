@@ -92,11 +92,23 @@ public class PasswordAndEmailVal
 
     public boolean LengthPhoneNumber (String number){
         boolean status;
-        if (number.length() >= 15)
+        if (number.length() >= 16)
         {
             return status = false;
         }
             return status = true;
+    }
+
+    public boolean LengthPassword (String number)
+    {
+        boolean status;
+
+        if (number.length() > 7 && number.length() < 17)
+
+        {
+            return status = true;
+        }
+            return status = false;
     }
 
     public boolean LengthUsername (String username){

@@ -264,10 +264,10 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		if (!passwordEmailVal.LengthPhoneNumber(signUpRequest.getNoTelepon()))
 		{
-			logger.info("ERROR : Length phone number must be less than 13 ...");
+			logger.info("ERROR : Length phone number must be less than 15 ...");
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("ERROR : Your phone number must be less than 13 ...",
+					.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
 							"400"));
 		}
 
@@ -314,6 +314,15 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("ERROR : Your pin length transaksi must be 6...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthPassword(signUpRequest.getPassword()))
+		{
+			logger.info("ERROR : Your password must be more than 7 and less than 17...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your password must be more than 7 and less than 17...",
 							"400"));
 		}
 
