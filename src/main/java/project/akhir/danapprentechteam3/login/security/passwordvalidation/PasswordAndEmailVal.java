@@ -18,7 +18,7 @@ public class PasswordAndEmailVal
     private static final String PASSWORD_PATTERN_UPPERCASE =
             ".*[A-Z].*";
     private static final String PASSWORD_PATTERN_SYMBOL =
-            ".*[@#$%].*";
+            ".*[@#$%!].*";
     private static final String EMAIL_REGEX =
             "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
 

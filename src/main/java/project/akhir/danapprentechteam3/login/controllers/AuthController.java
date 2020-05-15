@@ -316,7 +316,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		mailMessage.setTo(signUpRequest.getEmail());
 		mailMessage.setSubject("Test test");
 		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-		mailMessage.setText("To confirm "+"https://testing-connection-coba.herokuapp.com/api/auth/confirmation-account/"+
+		mailMessage.setText("To confirm "+"https://project-danapprentech-3.herokuapp.com/api/auth/confirmation-account/"+
 				emailOtp.getCodeVerify());
 		emailSenderService.sendEmail(mailMessage);
 
@@ -325,12 +325,45 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		return ResponseEntity.ok(new MessageResponse(signUpRequest.getNoTelepon() +" ---- "+otp.getCodeOtp()+ " your otp "+otp.getCodeOtp(),"200"));
 	}
 
-	@PostMapping("/confirmation-account/{token}")
+	@PostMapping("/signout")
+	public ResponseEntity<?> logoutUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+		User us = userRepository.findByNoTelepon(loginRequest.getNoTelepon());
+
+		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
+				loginRequest.getNoTelepon(), loginRequest.getPassword());
+
+		Authentication authentication = authenticationManager.authenticate(authRequest);
+
+		String token = us.getTokenAkses();
+
+		if (token != null && loginRequest.getPassword() != null && loginRequest.getNoTelepon() != null)
+		{
+			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+			us.setTokenAkses(null);
+			userRepository.save(us);
+			JwtResponse jwtResponse = new JwtResponse();
+			jwtResponse.setToken(null);
+			jwtResponse.setEmail(userDetails.getEmail());
+			jwtResponse.setId(userDetails.getId());
+			jwtResponse.setUsername(userDetails.getUsername());
+			return ResponseEntity.ok((jwtResponse));
+		} else {
+			return ResponseEntity.badRequest().body((new MessageResponse("ERROR : You are not logged in..!, Please login",
+					"400")));
+		}
+	}
+
+	/*
+	--------------------------------------------------------------------------------------------------------------------
+	 */
+
+	@GetMapping("/confirmation-account/{token}")
 	public ResponseEntity<?> confirmationUserAccount(@PathVariable("token")String token)
 	{
 		EmailOtp emailOtp = emailVerify.findByCodeVerify(token);
 		SmsOtp smsOtp = smsOtpRepository.findByEmail(emailOtp.getEmail());
-
 
 		if (emailOtp == null)
 		{
@@ -365,175 +398,9 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		}
 	}
 
-	@PostMapping("/signout")
-	public ResponseEntity<?> logoutUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-		User us = userRepository.findByNoTelepon(loginRequest.getNoTelepon());
-
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-				loginRequest.getNoTelepon(), loginRequest.getPassword());
-
-		Authentication authentication = authenticationManager.authenticate(authRequest);
-
-		String token = us.getTokenAkses();
-
-		if (token != null && loginRequest.getPassword() != null && loginRequest.getNoTelepon() != null)
-		{
-			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-			us.setTokenAkses(null);
-			userRepository.save(us);
-			JwtResponse jwtResponse = new JwtResponse();
-			jwtResponse.setToken(null);
-			jwtResponse.setEmail(userDetails.getEmail());
-			jwtResponse.setId(userDetails.getId());
-			jwtResponse.setUsername(userDetails.getUsername());
-			return ResponseEntity.ok((jwtResponse));
-		} else {
-			return ResponseEntity.badRequest().body((new MessageResponse("ERROR : You are not logged in..!, Please login",
-					"400")));
-		}
-	}
-
-	//password
-	@PostMapping("/forgot-password")
-	public ResponseEntity<?> forgotPassword(@RequestBody ForgotPassword forgotPassword)
-	{
-		User user = userRepository.findByEmail(forgotPassword.getEmail());
-
-		if (userRepository.existsByEmail(forgotPassword.getEmail()))
-		{
-			ForgotPassword forgotPasswords = new ForgotPassword();
-			forgotPasswords.setEmail(forgotPassword.getEmail());
-			forgotPasswordRepository.save(forgotPasswords);
-
-			//send email
-			SimpleMailMessage mailMessage = new SimpleMailMessage();
-			mailMessage.setTo(user.getEmail());
-			mailMessage.setSubject("Test test");
-			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-			mailMessage.setText("To confirm reset password "+"https://testing-connection-coba.herokuapp.com/api/auth/confirm-password/"+
-					forgotPasswords.getToken());
-			emailSenderService.sendEmail(mailMessage);
-
-			//send phone otp
-			SmsOtp otp = new SmsOtp();
-			otp.setMobileNumber(forgotPassword.getNoTelepon());
-//		otp.setMobileNumber("+6285777488828");// dummy
-			otp.setCodeOtp(smsOtpService.createOtp());
-//		otp.setCodeOtp("0657"); // dummy
-			smsOtpRepository.save(otp);
-//			smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
-			return ResponseEntity.ok(new MessageResponse("your otp "+otp.getCodeOtp(),"200"));
-		}else {
-			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!","400"));
-		}
-	}
-
-	@GetMapping("confirm-password/{token}")
-	public ResponseEntity<?> confirmResetPassword(@PathVariable("token") String token)
-	{
-		statusTokenForgotPassword = true;
-		return ResponseEntity.badRequest().body(new MessageResponse("Your token has been reset...","200"));
-	}
-
-	// email
-	@PutMapping("/change-password")
-	public ResponseEntity<?> test(@RequestBody ForgotPassword forgotPassword)
-	{
-		if (!forgotPassword.getNewPassword().equals(forgotPassword.getConfirmPassword()))
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Your Password doesnt match..","400"));
-		}
-
-		if (!statusTokenForgotPassword)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("Please update your token!","400"));
-		}
-
-		User user = userRepository.findByEmail(forgotPassword.getEmail());
-		Long id = user.getId();
-		String noTelepon = user.getNoTelepon();
-		String namaUser = user.getNamaUser();
-		String email = user.getEmail();
-		String va = user.getVirtualAccount();
-		String password = encoder.encode(forgotPassword.getNewPassword());
-
-		if (userRepository.existsByEmail(forgotPassword.getEmail()) && countForgotPassword < 1)
-		{
-			//delete data
-			userRepository.deleteById(id);
-
-			// new password
-			User users = new User();
-			users.setId(id);
-			users.setNoTelepon(noTelepon);
-			users.setNamaUser(namaUser);
-			users.setEmail(email);
-			users.setVirtualAccount(va);
-			users.setPassword(encoder.encode(password));
-			users.setStatus("200");
-			users.setMessage("changed password is successfully");
-			users.setUpdatedDate(new Date());
-			userRepository.save(users);
-
-			SimpleMailMessage mailMessage = new SimpleMailMessage();
-			mailMessage.setTo(user.getEmail());
-			mailMessage.setSubject("Congratulation, your password has been upadated successfully!!");
-			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-			mailMessage.setText("Don forget your password again, Thanks");
-			emailSenderService.sendEmail(mailMessage);
-
-			return ResponseEntity.ok(users);
-		}else {
-			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!","400"));
-		}
-	}
-
-	// forgot password by otp
-	@PutMapping("/confirmation-forgotPassword/{mobileNumber}/otp")
-	public ResponseEntity<?> sendOtp (@PathVariable ("mobileNumber") String mobileNumber,@RequestBody ForgotPassword forgotPassword) throws IOException
-	{
-		SmsOtp smsotps = smsOtpRepository.findByMobileNumber(mobileNumber);
-
-		if (!forgotPassword.getNewPassword().equals(forgotPassword.getConfirmPassword()))
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : ERROR : Your Password doesnt match..","400"));
-		}
-
-		if (forgotPassword.getOtp() == null || forgotPassword.getOtp().trim().length() <= 0)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
-		}
-
-		if (smsotps == null)
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please Cek", "400"));
-		}
-
-		if (!forgotPassword.isStatusOtp())
-		{
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
-		}
-
-//		if (forgotPassword.getOtp() != null && countForgotPassword < 1)
-//		{
-			countForgotPassword++;
-			User user = userRepository.findByNoTelepon(mobileNumber);
-			user.setPassword(encoder.encode(forgotPassword.getNewPassword()));
-			user.setStatus("200");
-			user.setMessage("Password Already updated");
-			user.setUpdatedDate(new Date());
-			smsotps.setStatusOtp(Boolean.TRUE);
-			smsOtpRepository.save(smsotps);
-			//save to database
-			userRepository.save(user);
-			return ResponseEntity.ok(userRepository.save(user));
-//		} else {
-//			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The Otp is invalid or broken","400"));
-//		}
-
-	}
+	/*
+	--------------------------------------------------------------------------------------------------------------------
+	 */
 
 	@PostMapping("/confirmation-otp/{mobileNumber}/otp")
 	public ResponseEntity<?> verifyOtp (@PathVariable ("mobileNumber") String mobileNumber, @RequestBody SmsOtp smsOtp)
@@ -541,8 +408,20 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		SmsOtp otpNumber = smsOtpRepository.findByMobileNumber(mobileNumber);
 		EmailOtp emailOtp = emailVerify.findByMobileNumber(mobileNumber);
 
-		System.out.println(emailOtp);
-		System.out.println(otpNumber);
+		if (smsOtp.getCodeOtp().length() != 4)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Your otp length must be 4..","400"));
+		}
+
+		if (otpNumber == null)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Get your Otp","400"));
+		}
+
+		if (otpNumber == null)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please sign up","400"));
+		}
 
 		if (smsOtp.getCodeOtp() == null || smsOtp.getCodeOtp().trim().length() <= 0)
 		{
@@ -574,50 +453,258 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			userRepository.save(user);
 			return ResponseEntity.ok(userRepository.save(user));
 		} else {
-			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The link is invalid or broken","400"));
+			return ResponseEntity.badRequest().body(new MessageResponse(
+					"ERROR : The link is invalid or broken","400"));
 		}
 	}
-//
-//	@PostMapping("/reset-password-inapplication")
-//	public ResponseEntity<?> updatePassword (@RequestBody ForgotPassword forgotPassword)
-//	{
-//
-//		User user = userRepository.findByNoTelepon(forgotPassword.getNoTelepon());
-//
-//		if (user.getUsername() == null)
-//		{
-//			return ResponseEntity.badRequest().body((new MessageResponse("ERROR : Please check your phone number",
-//					"400")));
-//		}
-//
-//		if (user.getEmail() == null)
-//		{
-//			return ResponseEntity.badRequest().body((new MessageResponse("ERROR : Please check your email number",
-//					"400")));
-//		}
-//
-//		ForgotPassword forgotPasswords = new ForgotPassword();
-//		forgotPasswords.setEmail(forgotPassword.getEmail());
-//		forgotPasswordRepository.save(forgotPasswords);
-//
-//		//send email
-//		SimpleMailMessage mailMessage = new SimpleMailMessage();
-//		mailMessage.setTo(user.getEmail());
-//		mailMessage.setSubject("Test test");
-//		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-//		mailMessage.setText("To confirm reset password "+"https://testing-connection-coba.herokuapp.com/api/auth/confirm-password/"+
-//				forgotPasswords.getToken());
-//		emailSenderService.sendEmail(mailMessage);
-//
-//		//send phone otp
-//		SmsOtp otp = new SmsOtp();
-//		otp.setMobileNumber(forgotPassword.getNoTelepon());
-////		otp.setMobileNumber("+6285777488828");// dummy
-//		otp.setCodeOtp(smsOtpService.createOtp());
-////		otp.setCodeOtp("0657"); // dummy
-//		smsOtpRepository.save(otp);
-////		smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
-//
-//		return ResponseEntity.badRequest().body(new MessageResponse("your otp "+otp.getCodeOtp(),"400"));
-//	}
+
+	/*
+	--------------------------------------------------------------------------------------------------------------------
+	 */
+
+	//Lupa password
+	@PostMapping("/forgot-password")
+	public ResponseEntity<?> forgotPassword(@RequestBody ForgotPassword forgotPassword) {
+		User user = userRepository.findByEmail(forgotPassword.getEmail());
+		EmailOtp emailOtp = emailVerify.findByEmail(forgotPassword.getEmail());
+		SmsOtp smsOtp = smsOtpRepository.findByMobileNumber(forgotPassword.getNoTelepon());
+
+		emailOtp.setStatusEmailVerify(true);
+		smsOtp.setStatusOtp(true);
+
+		emailVerify.save(emailOtp);
+		smsOtpRepository.save(smsOtp);
+
+		if (emailVerify.existsByMobileNumber(forgotPassword.getNoTelepon()))
+		{
+			emailVerify.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (userRepository.existsByEmail(forgotPassword.getEmail())) {
+			ForgotPassword forgotPasswords = new ForgotPassword();
+			forgotPasswords.setEmail(forgotPassword.getEmail());
+
+			// email verify
+			EmailOtp email = new EmailOtp();
+			email.setEmail(forgotPassword.getEmail());
+			email.setCodeVerify(UUID.randomUUID().toString());
+			email.setStatusEmailVerify(true);
+			email.setMobileNumber(forgotPassword.getNoTelepon());
+			emailVerify.save(email);
+
+			// email verify
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(forgotPassword.getEmail());
+			mailMessage.setSubject("Test test");
+			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
+			mailMessage.setText("To confirm "+"https://project-danapprentech-3.herokuapp.com/api/auth/confirm-password/"+
+					email.getCodeVerify());
+			emailSenderService.sendEmail(mailMessage);
+
+		} else {
+			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!", "400"));
+		}
+		if (userRepository.existsByNoTelepon(forgotPassword.getNoTelepon())) {
+			// number verify
+			SmsOtp otp = new SmsOtp();
+			otp.setMobileNumber(forgotPassword.getNoTelepon());
+//		otp.setMobileNumber("+6285777488828");// dummy
+			otp.setCodeOtp(smsOtpService.createOtp());
+//		otp.setCodeOtp("0657"); // dummy
+			otp.setStatusOtp(true);
+			otp.setEmail(forgotPassword.getEmail());
+			smsOtpRepository.save(otp);
+//			smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
+			return ResponseEntity.ok(new MessageResponse("your otp " + otp.getCodeOtp(), "200"));
+		} else {
+			return ResponseEntity.badRequest().body(new MessageResponse("Phone number not registered...!", "400"));
+		}
+	}
+
+	@GetMapping("confirm-password/{token}")
+	public ResponseEntity<?> confirmResetPassword(@PathVariable("token") String token)
+	{
+		EmailOtp emailOtp = emailVerify.findByCodeVerify(token);
+		emailOtp.setStatusEmailVerify(true);
+		emailVerify.save(emailOtp);
+		return ResponseEntity.badRequest().body(new MessageResponse("Your token has been reset...","200"));
+	}
+
+	// forgot password confirmation by otp
+	@PutMapping("/confirmation-forgotPassword/{mobileNumber}/otp")
+	public ResponseEntity<?> sendOtp (@PathVariable ("mobileNumber") String mobileNumber,@RequestBody ForgotPassword forgotPassword) throws IOException
+	{
+		SmsOtp smsotps = smsOtpRepository.findByMobileNumber(mobileNumber);
+		EmailOtp emailOtp = emailVerify.findByMobileNumber(mobileNumber);
+
+		if (!forgotPassword.getNewPassword().equals(forgotPassword.getConfirmPassword()))
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : ERROR : Your Password doesnt match..","400"));
+		}
+
+		if (forgotPassword.getOtp() == null || forgotPassword.getOtp().trim().length() <= 0)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
+		}
+
+		if (!smsotps.isStatusOtp())
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
+		}
+
+		if (forgotPassword.getOtp().length() != 4)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Your otp length must be 4..","400"));
+		}
+
+		if (smsotps == null)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Get your Otp","400"));
+		}
+
+		if (smsotps.getCodeOtp() == null || smsotps.getCodeOtp().trim().length() <= 0)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide otp","400"));
+		}
+
+		if (emailOtp.isStatusEmailVerify() && smsotps.isStatusOtp())
+		{
+
+			User user = userRepository.findByNoTelepon(mobileNumber);
+			user.setPassword(encoder.encode(forgotPassword.getNewPassword()));
+			user.setStatus("200");
+			user.setMessage("Password Already updated");
+			user.setUpdatedDate(new Date());
+			user.setPinTransaksi(user.getPinTransaksi());
+			smsotps.setStatusOtp(false);
+			emailOtp.setStatusEmailVerify(false);
+			emailVerify.save(emailOtp);
+			smsOtpRepository.save(smsotps);
+			//save to database
+			userRepository.save(user);
+			return ResponseEntity.ok(userRepository.save(user));
+		} else {
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The Otp is invalid or broken","400"));
+		}
+
+	}
+
+	/*
+	--------------------------------------------------------------------------------------------------------------------
+	 */
+
+	@PostMapping("/reset-password-inapplication")
+	public ResponseEntity<?> updatePassword (@RequestBody ForgotPassword forgotPassword)
+	{
+		EmailOtp emailOtp = emailVerify.findByEmail(forgotPassword.getEmail());
+		SmsOtp smsOtp = smsOtpRepository.findByMobileNumber(forgotPassword.getNoTelepon());
+
+		emailOtp.setStatusEmailVerify(true);
+		smsOtp.setStatusOtp(true);
+
+		emailVerify.save(emailOtp);
+		smsOtpRepository.save(smsOtp);
+
+		if (emailVerify.existsByMobileNumber(forgotPassword.getNoTelepon()))
+		{
+			emailVerify.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (userRepository.existsByEmail(forgotPassword.getEmail())) {
+			ForgotPassword forgotPasswords = new ForgotPassword();
+			forgotPasswords.setEmail(forgotPassword.getEmail());
+
+			// email verify
+			EmailOtp email = new EmailOtp();
+			email.setEmail(forgotPassword.getEmail());
+			email.setCodeVerify(UUID.randomUUID().toString());
+			email.setStatusEmailVerify(true);
+			email.setMobileNumber(forgotPassword.getNoTelepon());
+			emailVerify.save(email);
+
+			// email verify
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(forgotPassword.getEmail());
+			mailMessage.setSubject("Test test");
+			mailMessage.setFrom("setiawan.aanbudi@gmail.com");
+			mailMessage.setText("To confirm "+"https://project-danapprentech-3.herokuapp.com/api/auth/confirm-password/"+
+					email.getCodeVerify());
+			emailSenderService.sendEmail(mailMessage);
+
+		} else {
+			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!", "400"));
+		}
+		if (userRepository.existsByNoTelepon(forgotPassword.getNoTelepon())) {
+			// number verify
+			SmsOtp otp = new SmsOtp();
+			otp.setMobileNumber(forgotPassword.getNoTelepon());
+//		otp.setMobileNumber("+6285777488828");// dummy
+			otp.setCodeOtp(smsOtpService.createOtp());
+//		otp.setCodeOtp("0657"); // dummy
+			otp.setStatusOtp(true);
+			otp.setEmail(forgotPassword.getEmail());
+			smsOtpRepository.save(otp);
+//			smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
+			return ResponseEntity.ok(new MessageResponse("your otp " + otp.getCodeOtp(), "200"));
+		} else {
+			return ResponseEntity.badRequest().body(new MessageResponse("Phone number not registered...!", "400"));
+		}
+	}
+
+	/*
+        --------------------------------------------------------------------------------------------------------------------
+     */
+
+	// email
+	@PutMapping("/change-password")
+	public ResponseEntity<?> test(@RequestBody ForgotPassword forgotPassword)
+	{
+		SmsOtp smsotps = smsOtpRepository.findByEmail(forgotPassword.getEmail());
+		EmailOtp emailOtp = emailVerify.findByEmail(forgotPassword.getEmail());
+
+		if (!forgotPassword.getNewPassword().equals(forgotPassword.getConfirmPassword()))
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : ERROR : Your Password doesnt match..","400"));
+		}
+
+		if (forgotPassword.getEmail() == null || forgotPassword.getEmail().trim().length() <= 0)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Please provide email","400"));
+		}
+
+		if (!emailOtp.isStatusEmailVerify())
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
+		}
+
+		if (emailOtp.isStatusEmailVerify() && smsotps.isStatusOtp())
+		{
+
+			User user = userRepository.findByEmail(forgotPassword.getEmail());
+			user.setPassword(encoder.encode(forgotPassword.getNewPassword()));
+			user.setStatus("200");
+			user.setMessage("Password Already updated");
+			user.setUpdatedDate(new Date());
+			user.setPinTransaksi(user.getPinTransaksi());
+			smsotps.setStatusOtp(false);
+			emailOtp.setStatusEmailVerify(false);
+			emailVerify.save(emailOtp);
+			smsOtpRepository.save(smsotps);
+			//save to database
+			userRepository.save(user);
+			return ResponseEntity.ok(userRepository.save(user));
+		}else {
+			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!","400"));
+		}
+	}
 }

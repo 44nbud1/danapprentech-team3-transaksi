@@ -1,6 +1,5 @@
 package project.akhir.danapprentechteam3.transaksi.controller;
 
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;

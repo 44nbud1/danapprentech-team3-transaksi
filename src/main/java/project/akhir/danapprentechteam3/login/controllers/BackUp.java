@@ -297,4 +297,9 @@ public class BackUp {
 //        User user = userRepository.findByEmail("team3.danapprentech@gmail.com");
 //        return ResponseEntity.ok(user);
 //    }
+
+    public static void main(String[] args) {
+        String a = "1234";
+                System.out.println(a.length());
+    }
 }

@@ -11,4 +11,5 @@ public interface EmailVerify extends JpaRepository<EmailOtp, Long>
     boolean existsByMobileNumber(String mobileNumber);
     void deleteByEmail(String Email);
     void deleteByMobileNumber(String mobileNumber);
+    EmailOtp findByEmail(String email);
 }

@@ -75,6 +75,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/provider/cek-paket").permitAll()
 				.antMatchers("/api/transaksi/E-wallet").permitAll()
 				.antMatchers("/api/transaksi/choice").permitAll()
+				.antMatchers("/api/transaksi/confirm-password/{token}").permitAll()
+				.antMatchers("/api/transaksi/confirm-password/**").permitAll()
 				.antMatchers("/api/transaksi/uploadPhoto").permitAll()
 				.antMatchers("/api/transaksi/virtual-account").permitAll()
 				.antMatchers("/api/transaksi/buktipembayaran/").permitAll()
