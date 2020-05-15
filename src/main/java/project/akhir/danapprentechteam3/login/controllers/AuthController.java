@@ -260,6 +260,15 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
+		if (!passwordEmailVal.LengthPhoneNumber(signUpRequest.getNoTelepon()))
+		{
+			logger.info("ERROR : Length phone number must be < 13 ...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must ...",
+							"400"));
+		}
+
 		if (!passwordEmailVal.NumberOnlyValidator(signUpRequest.getNoTelepon()))
 		{
 			logger.info("ERROR : Your phone number must be numeric...");
@@ -269,14 +278,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.LengthPhoneNumber(signUpRequest.getNoTelepon()))
-		{
-			logger.info("ERROR : Length phone number must be < 13 ...");
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("ERROR : Your phone number must be numeric ...",
-							"400"));
-		}
+
 
 		if (emailVerify.existsByEmail(signUpRequest.getEmail()) && emailVerify.existsByMobileNumber(signUpRequest.getNoTelepon()))
 		{
@@ -745,5 +747,21 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		userRepository.deleteByNoTelepon(mobileNumber);
 		return ResponseEntity.ok(new MessageResponse
 				("Your account has been deleted...!","200"));
+	}
+
+	@PutMapping("/edit-user/{mobileNumber}")
+	public ResponseEntity<?> updateUser(@PathVariable("mobileNumber") String mobileNumber, @RequestBody
+										EditUser editUser)
+	{
+		User user = userRepository.findByNoTelepon(mobileNumber);
+
+		if (user == null)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse
+					("ERROR : Phone Number not registered...!","400"));
+		}
+
+		user.setNamaUser(editUser.getNamaUser());
+		return ResponseEntity.ok(userRepository.save(user));
 	}
 }
