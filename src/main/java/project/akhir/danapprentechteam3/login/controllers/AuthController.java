@@ -834,4 +834,10 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 	{
 		return ResponseEntity.ok(smsOtpRepository.findByMobileNumber(mobileNumber));
 	}
+
+	@GetMapping("/qa-get-token/{email}")
+	public ResponseEntity<?> showToken(@PathVariable("email") String email)
+	{
+		return ResponseEntity.ok(emailVerify.findByEmail(email));
+	}
 }

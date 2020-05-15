@@ -87,6 +87,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/transaksi/edit-user/{mobileNumber}").permitAll()
 				.antMatchers("/api/transaksi/qa-get-otp/{mobileNumber}").permitAll()
 				.antMatchers("/api/auth/qa-get-otp/{mobileNumber}").permitAll()
+				.antMatchers("/api/auth/qa-get-token/{email}").permitAll()
+				.antMatchers("/api/auth/qa-get-token/**").permitAll()
 				.antMatchers("/api/transaksi/qa-get-otp/**").permitAll()
 				.antMatchers("/api/auth/qa-get-otp/**").permitAll()
 				.antMatchers("/api/transaksi/edit-user/**").permitAll()
