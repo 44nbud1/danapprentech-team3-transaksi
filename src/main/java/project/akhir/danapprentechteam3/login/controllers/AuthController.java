@@ -726,4 +726,24 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!","400"));
 		}
 	}
+
+	/*
+        --------------------------------------------------------------------------------------------------------------------
+     */
+
+	@DeleteMapping("/delete-user/{mobileNumber}")
+	public ResponseEntity<?> deleteUser(@PathVariable("mobileNumber") String mobileNumber)
+	{
+		User user = userRepository.findByNoTelepon(mobileNumber);
+
+		if (user == null)
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse
+					("ERROR : Phone Number not registered...!","400"));
+		}
+
+		userRepository.deleteByNoTelepon(mobileNumber);
+		return ResponseEntity.ok(new MessageResponse
+				("Your account has been deleted...!","200"));
+	}
 }
