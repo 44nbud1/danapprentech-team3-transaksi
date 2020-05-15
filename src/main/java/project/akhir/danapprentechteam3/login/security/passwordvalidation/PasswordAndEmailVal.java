@@ -72,6 +72,14 @@ public class PasswordAndEmailVal
         return matcher.matches();
     }
 
+    public boolean LengthPhoneNumber (String number){
+        boolean status;
+        if (number.length() >= 13){
+            return status = false;
+        }
+            return status = true;
+    }
+
     public boolean PasswordValidatorSpace (String password){
         if(password != null){
             for(int i = 0; i < password.length(); i++){

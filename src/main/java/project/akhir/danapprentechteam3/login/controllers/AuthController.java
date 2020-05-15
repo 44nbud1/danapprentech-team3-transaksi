@@ -262,7 +262,16 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		if (!passwordEmailVal.NumberOnlyValidator(signUpRequest.getNoTelepon()))
 		{
-			logger.info("ERROR : Your phone number must be ...");
+			logger.info("ERROR : Your phone number must be numeric...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be numeric ...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthPhoneNumber(signUpRequest.getNoTelepon()))
+		{
+			logger.info("ERROR : Length phone number must be < 13 ...");
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("ERROR : Your phone number must be numeric ...",
@@ -493,8 +502,15 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 //			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
 //		}
 
-		if (emailVerify.existsByEmail(forgotPassword.getEmail()))
+		if (!emailVerify.existsByEmail(forgotPassword.getEmail()))
 		{
+			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!", "400"));
+		}
+
+		if (!smsOtpRepository.existsByMobileNumber(forgotPassword.getNoTelepon()))
+		{
+			return ResponseEntity.badRequest().body(new MessageResponse("Phone number not registered...!", "400"));
+		}
 			ForgotPassword forgotPasswords = new ForgotPassword();
 			forgotPasswords.setEmail(forgotPassword.getEmail());
 
@@ -514,10 +530,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 					emailOtp.getCodeVerify());
 			emailSenderService.sendEmail(mailMessage);
 
-		} else {
-			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!", "400"));
-		}
-		if (smsOtpRepository.existsByMobileNumber(forgotPassword.getNoTelepon())) {
 			// number verify
 			SmsOtp otp = smsOtpRepository.findByMobileNumber(forgotPassword.getNoTelepon());
 			otp.setMobileNumber(forgotPassword.getNoTelepon());
@@ -530,9 +542,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			smsOtpRepository.save(otp);
 //			smsOtpService.sendSMS(forgotPassword.getNoTelepon(), otp.getCodeOtp());
 			return ResponseEntity.ok(new MessageResponse("your otp " + otp.getCodeOtp(), "200"));
-		} else {
-			return ResponseEntity.badRequest().body(new MessageResponse("Phone number not registered...!", "400"));
-		}
+
 	}
 
 	@GetMapping("confirm-password/{token}")
