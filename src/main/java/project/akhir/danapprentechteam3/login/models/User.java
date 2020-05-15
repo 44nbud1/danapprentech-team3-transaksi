@@ -30,7 +30,7 @@ public class User {
 	private String noTelepon;
 
 	@NotBlank
-	@Size(min = 3,max = 20)
+	@Size(min = 3, max = 20)
 	@Column
 	private String namaUser;
 

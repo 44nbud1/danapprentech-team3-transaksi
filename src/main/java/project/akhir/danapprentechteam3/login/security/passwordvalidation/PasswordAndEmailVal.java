@@ -11,24 +11,29 @@ public class PasswordAndEmailVal
     private Pattern pattern;
     private Matcher matcher;
 
-    private static final String PASSWORD_PATTERN_NUMBER =
+    // "^[0-9]+$"
+    private static final String PASSWORD_PATTERN_NUMBER     =
             ".*\\d.*";
-    private static final String PASSWORD_PATTERN_LOWERCASE =
+    private static final String NUMBER_ONLY                 =
+            "\\+?([ -]?\\d+)+|\\(\\d+\\)([ -]\\d+)";
+    private static final String PASSWORD_PATTERN_LOWERCASE  =
             ".*[a-z].*";
-    private static final String PASSWORD_PATTERN_UPPERCASE =
+    private static final String PASSWORD_PATTERN_UPPERCASE  =
             ".*[A-Z].*";
-    private static final String PASSWORD_PATTERN_SYMBOL =
+    private static final String PASSWORD_PATTERN_SYMBOL     =
             ".*[@#$%!].*";
-    private static final String EMAIL_REGEX =
+    private static final String EMAIL_REGEX                 =
             "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
 
-    public boolean PasswordValidatorLowercase(String password){
+    public boolean PasswordValidatorLowercase(String password)
+    {
         pattern = Pattern.compile(PASSWORD_PATTERN_LOWERCASE);
         matcher = pattern.matcher(password);
         return matcher.matches();
     }
 
-    public boolean PasswordValidatorUpercase(String password){
+    public boolean PasswordValidatorUpercase(String password)
+    {
         pattern = Pattern.compile(PASSWORD_PATTERN_UPPERCASE);
         matcher = pattern.matcher(password);
         return matcher.matches();
@@ -58,6 +63,12 @@ public class PasswordAndEmailVal
     public boolean EmailValidator (String password){
         pattern = Pattern.compile(EMAIL_REGEX);
         matcher = pattern.matcher(password);
+        return matcher.matches();
+    }
+
+    public boolean NumberOnlyValidator (String number){
+        pattern = Pattern.compile(NUMBER_ONLY);
+        matcher = pattern.matcher(number);
         return matcher.matches();
     }
 

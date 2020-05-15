@@ -145,11 +145,6 @@ public class TransaksiController {
             return ResponseEntity.badRequest().body(new MessageResponse(
                     "Pesanan mu sudah dibayar", "400"));
         }
-//
-//        if (transaksi.isStatusUpload() == false) {
-//            return ResponseEntity.badRequest().body(new MessageResponse(
-//                    "Please , Upload Bukti pembayaran", "400"));
-//        }
 
         choice.setStatusTransaksi(true);
         customerChoiceRepository.save(choice);
@@ -191,7 +186,7 @@ public class TransaksiController {
         return new ResponseEntity<>(customerChoiceRepository.save(choice),HttpStatus.OK);
     }
 
-    @PostMapping("/history/{mobileNumber}")
+    @GetMapping("/history/{mobileNumber}")
     public ResponseEntity<?> hystoryTransaksi(@PathVariable String  mobileNumber)
     {
         Transaksi transaksi = transaksiRepository.findByNomorTeleponUser(mobileNumber);
@@ -205,43 +200,6 @@ public class TransaksiController {
         return new ResponseEntity<>(transaksi,HttpStatus.OK);
     }
 
-
-//    @PostMapping("/virtual-account")
-//    public ResponseEntity<?> transaksiVirtualAccount(@RequestBody TransaksiRequest request)
-//    {
-//
-//        User dataUser = userRepository.findByNoTelepon(request.getNoTelepon());
-//        CustomerChoice choice = customerChoiceRepository.findByNoTelepon(request.getNoTelepon());
-//        if (String.valueOf(dataUser.getPinTransaksi()).equalsIgnoreCase(String.valueOf(request.getPinTransaksi())))
-//        {
-//            if (dataUser == null)
-//            {
-//                return ResponseEntity.badRequest().body(new MessageResponse(
-//                        "Anda Tidak memiliki transaksi", "400"));
-//            }
-//
-//
-//            if (dataUser.getSaldo() < choice.getHarga())
-//            {
-//                return ResponseEntity.badRequest().body(new MessageResponse(
-//                        "Saldomu kurang silakan isi ulang saldo mu sekarang", "400"));
-//            }
-//
-//            if (choice.isStatusTransaksi())
-//            {
-//                return ResponseEntity.badRequest().body(new MessageResponse(
-//                        "Pesanan mu sudah dibayar", "400"));
-//            }
-//
-//            return ResponseEntity.ok(new MessageResponse("Transaction successfully, please upload photo transaction","200"));
-//        } else {
-//            return new ResponseEntity<>(new MessageResponse("Wrong Virtual Account, Please" +
-//                    " try again","400"), HttpStatus.BAD_REQUEST);
-//        }
-//
-//    }
-
-//    @PostMapping("/buktipembayaran/")
     @RequestMapping(value = "/buktipembayaran" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
     private ResponseEntity<?> uploadFileResponse(@RequestParam("file") MultipartFile file)
     {

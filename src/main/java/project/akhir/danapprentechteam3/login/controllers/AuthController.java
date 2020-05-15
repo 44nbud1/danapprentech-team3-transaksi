@@ -188,6 +188,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
+
 		if (!passwordEmailVal.PasswordValidatorSpace(signUpRequest.getPassword())) {
 			logger.info("ERROR : Your password does not must contains white space...");
 			return ResponseEntity
@@ -256,6 +257,15 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("ERROR : Please check your password not Match!",
+							"400"));
+		}
+
+		if (!passwordEmailVal.NumberOnlyValidator(signUpRequest.getNoTelepon()))
+		{
+			logger.info("ERROR : Your phone number must be ...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be numeric ...",
 							"400"));
 		}
 

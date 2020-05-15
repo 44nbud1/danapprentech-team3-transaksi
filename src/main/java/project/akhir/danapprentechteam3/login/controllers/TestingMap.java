@@ -106,4 +106,16 @@ public class TestingMap {
 //    }
 //
 
+    public static void main(String[] args) {
+        String a = "12345+6";
+        int dd = Integer.parseInt(a);
+///^[A-Za-z]+$/
+        System.out.println(dd);
+
+
+    }
+
+
+
+
 }
