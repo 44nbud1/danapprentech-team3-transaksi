@@ -24,6 +24,8 @@ public class PasswordAndEmailVal
             ".*[@#$%!].*";
     private static final String EMAIL_REGEX                 =
             "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
+    private static final String ALPHABET                 =
+            "[a-zA-Z\\s']+";
 
     public boolean PasswordValidatorLowercase(String password)
     {
@@ -60,27 +62,42 @@ public class PasswordAndEmailVal
         return status;
     }
 
-    public boolean EmailValidator (String password){
+    public boolean EmailValidator (String password)
+    {
         pattern = Pattern.compile(EMAIL_REGEX);
         matcher = pattern.matcher(password);
         return matcher.matches();
     }
 
-    public boolean NumberOnlyValidator (String number){
+    public boolean NumberOnlyValidator (String number)
+    {
         pattern = Pattern.compile(NUMBER_ONLY);
         matcher = pattern.matcher(number);
         return matcher.matches();
     }
 
+    public boolean Alphabetic (String namaUser){
+        pattern = Pattern.compile(ALPHABET);
+        matcher = pattern.matcher(namaUser);
+        return matcher.matches();
+    }
+
     public boolean LengthPhoneNumber (String number){
         boolean status;
-        if (number.length() >= 15){
+        if (number.length() >= 15)
+        {
             return status = false;
         }
             return status = true;
     }
 
-
+    public boolean LengthUsername (String username){
+        boolean status;
+        if (username.length() <= 3){
+            return status = false;
+        }
+        return status = true;
+    }
 
     public boolean PasswordValidatorSpace (String password){
         if(password != null){
@@ -92,5 +109,4 @@ public class PasswordAndEmailVal
         }
         return true;
     }
-
 }

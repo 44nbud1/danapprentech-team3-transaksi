@@ -177,6 +177,8 @@ public class TransaksiController {
         choice.setNamaProvider(customerChoice.getNamaProvider());
         choice.setPaketData(customerChoice.getPaketData());
         choice.setNomorPaketData(customerChoice.getNomorPaketData());
+        choice.setStatus("200");
+        choice.setMessage("successfully");
 
         CustomerChoice choices = customerChoiceRepository.findByNoTelepon(customerChoice.getNoTelepon());
 

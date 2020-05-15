@@ -11,5 +11,7 @@ public class JwtResponse {
 	private String username;
 	private String email;
 	private Long saldo;
+	private String message;
+	private String status;
 
 }

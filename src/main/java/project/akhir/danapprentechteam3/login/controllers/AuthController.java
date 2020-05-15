@@ -262,31 +262,47 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		if (!passwordEmailVal.LengthPhoneNumber(signUpRequest.getNoTelepon()))
 		{
-			logger.info("ERROR : Length phone number must be < 13 ...");
+			logger.info("ERROR : Length phone number must be less than 13 ...");
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("ERROR : Your phone number must ...",
+					.body(new MessageResponse("ERROR : Your phone number must be less than 13 ...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthUsername(signUpRequest.getNamaUser()))
+		{
+			logger.info("ERROR : Length nama user must be less than 3 character...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
 							"400"));
 		}
 
 		if (!passwordEmailVal.NumberOnlyValidator(signUpRequest.getNoTelepon()))
 		{
-			logger.info("ERROR : Your phone number must be numeric...");
+			logger.info("ERROR : Your phone number must be all numeric...");
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("ERROR : Your phone number must be numeric ...",
+					.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.Alphabetic(signUpRequest.getNamaUser()))
+		{
+			logger.info("ERROR : Your phone number must be all Alphabetic...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be all Alphabetic ...",
 							"400"));
 		}
 
 		if (emailVerify.existsByEmail(signUpRequest.getEmail()) && emailVerify.existsByMobileNumber(signUpRequest.getNoTelepon()))
 		{
-			System.out.println("ya");
 			emailVerify.deleteByMobileNumber(signUpRequest.getNoTelepon());
 		}
 
 		if (smsOtpRepository.existsByEmail(signUpRequest.getEmail()) && smsOtpRepository.existsByMobileNumber(signUpRequest.getNoTelepon()))
 		{
-			System.out.println("tidak");
 			smsOtpRepository.deleteByMobileNumber(signUpRequest.getNoTelepon());
 		}
 
@@ -367,6 +383,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			jwtResponse.setEmail(userDetails.getEmail());
 			jwtResponse.setId(userDetails.getId());
 			jwtResponse.setUsername(userDetails.getUsername());
+			jwtResponse.setMessage("successfully");
+			jwtResponse.setStatus("200");
 			return ResponseEntity.ok((jwtResponse));
 		} else {
 			return ResponseEntity.badRequest().body((new MessageResponse("ERROR : You are not logged in..!, Please login",
@@ -456,7 +474,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			emailOtp.setStatusEmailVerify(true);
 		}
 
-		if (!(otpNumber.isStatusOtp() && emailOtp.isStatusEmailVerify())) {
+		if (!(otpNumber.isStatusOtp() && emailOtp.isStatusEmailVerify()))
+		{
 			return ResponseEntity.badRequest().body(new MessageResponse(
 					"ERROR : The link is invalid or broken", "400"));
 		}
