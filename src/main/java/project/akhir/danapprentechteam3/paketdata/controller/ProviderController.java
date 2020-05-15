@@ -40,7 +40,7 @@ public class ProviderController {
     }
 
     @PostMapping("/cek-paket")
-    public ResponseEntity<?> testOaket(@RequestBody Phone phone) throws FileNotFoundException {
+    public ResponseEntity<?> testPaket(@RequestBody Phone phone) throws FileNotFoundException {
 
         if (regexNumber.validatePhoneNumber(phone.getNomer_hp()).equalsIgnoreCase("Invalid Number"))
         {

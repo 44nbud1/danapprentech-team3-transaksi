@@ -27,6 +27,9 @@ import project.akhir.danapprentechteam3.transaksi.uploadfile.service.DBFileStora
 
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Transactional
 @RestController
@@ -189,7 +192,10 @@ public class TransaksiController {
     @GetMapping("/history/{mobileNumber}")
     public ResponseEntity<?> hystoryTransaksi(@PathVariable String  mobileNumber)
     {
-        Transaksi transaksi = transaksiRepository.findByNomorTeleponUser(mobileNumber);
+        List<Transaksi> transaksi = transaksiRepository.findByNomorTeleponUser(mobileNumber);
+
+        Map<String,List<Transaksi>> history = new HashMap<>();
+        history.put("history",transaksi);
 
         if (transaksi == null)
         {
@@ -197,7 +203,7 @@ public class TransaksiController {
                     "You have no transactions", "400"));
         }
 
-        return new ResponseEntity<>(transaksi,HttpStatus.OK);
+        return new ResponseEntity<>(history,HttpStatus.OK);
     }
 
     @RequestMapping(value = "/buktipembayaran" , method = RequestMethod.POST, consumes = { "multipart/form-data" })

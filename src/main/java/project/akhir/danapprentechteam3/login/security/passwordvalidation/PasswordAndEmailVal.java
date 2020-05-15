@@ -80,6 +80,8 @@ public class PasswordAndEmailVal
             return status = true;
     }
 
+
+
     public boolean PasswordValidatorSpace (String password){
         if(password != null){
             for(int i = 0; i < password.length(); i++){
