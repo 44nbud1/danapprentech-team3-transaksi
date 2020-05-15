@@ -204,8 +204,7 @@ public class TransaksiController {
 
         if (transaksi == null)
         {
-            return ResponseEntity.badRequest().body(new MessageResponse(
-                    "You have no transactions", "400"));
+            return ResponseEntity.badRequest().body(res);
         }
 
         return new ResponseEntity<>(history,HttpStatus.OK);

@@ -113,7 +113,7 @@ public class PasswordAndEmailVal
 
     public boolean LengthUsername (String username){
         boolean status;
-        if (username.length() <= 3){
+        if (username.length() < 3){
             return status = false;
         }
         return status = true;

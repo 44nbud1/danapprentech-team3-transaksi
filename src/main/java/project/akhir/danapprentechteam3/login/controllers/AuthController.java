@@ -273,7 +273,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		if (!passwordEmailVal.LengthUsername(signUpRequest.getNamaUser()))
 		{
-			logger.info("ERROR : Length nama user must be less than 3 character...");
+			logger.info("ERROR : Length nama user must be more than equal 3 character...");
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
