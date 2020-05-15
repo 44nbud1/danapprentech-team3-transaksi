@@ -208,7 +208,7 @@ public class TransaksiController {
                     "You have no transactions", "400"));
         }
 
-        return new ResponseEntity<>(responses,HttpStatus.OK);
+        return new ResponseEntity<>(history,HttpStatus.OK);
     }
 
     @RequestMapping(value = "/buktipembayaran" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
