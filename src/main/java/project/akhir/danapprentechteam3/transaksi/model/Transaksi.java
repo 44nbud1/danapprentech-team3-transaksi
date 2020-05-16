@@ -38,4 +38,7 @@ public class Transaksi implements Serializable{
     private boolean statusPembayaran = false;
     private Long saldoAkhir;
     private boolean statusUpload = false;
+    private String status;
+    private String message;
+
 }

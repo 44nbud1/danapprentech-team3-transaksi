@@ -826,6 +826,10 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		}
 
 		user.setNamaUser(editUser.getNamaUser());
+		user.setNoTelepon(editUser.getNoTelepon());
+		user.setEmail(editUser.getEmail());
+		user.setMessage("Profile has been changed");
+		user.setStatus("200");
 		return ResponseEntity.ok(userRepository.save(user));
 	}
 

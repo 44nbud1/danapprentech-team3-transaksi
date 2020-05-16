@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class EditUser
 {
     private String namaUser;
+    private String email;
+    private String noTelepon;
 }
