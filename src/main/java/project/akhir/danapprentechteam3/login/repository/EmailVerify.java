@@ -1,7 +1,7 @@
 package project.akhir.danapprentechteam3.login.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import project.akhir.danapprentechteam3.login.payload.request.EmailToken;
+import project.akhir.danapprentechteam3.login.models.EmailToken;
 
 public interface EmailVerify extends JpaRepository<EmailToken, Long>
 {

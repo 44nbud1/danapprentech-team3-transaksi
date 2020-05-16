@@ -4,7 +4,7 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import project.akhir.danapprentechteam3.login.payload.request.SmsOtp;
+import project.akhir.danapprentechteam3.login.models.SmsOtp;
 import project.akhir.danapprentechteam3.login.repository.SmsOtpRepository;
 
 import java.util.Random;
@@ -38,9 +38,6 @@ public class SmsOtpServiceImpl extends Thread implements SmsOtpService
         {
             newCodeOtp += rand.nextInt(9);
         }
-
-        SmsOtp smsOtp = new SmsOtp();
-        smsOtpRepository.save(smsOtp);
         return newCodeOtp;
     }
 

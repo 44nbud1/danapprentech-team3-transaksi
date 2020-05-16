@@ -6,12 +6,9 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
 @Data
 public class UpdatePassword {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long idReset;
         private String token ;
 

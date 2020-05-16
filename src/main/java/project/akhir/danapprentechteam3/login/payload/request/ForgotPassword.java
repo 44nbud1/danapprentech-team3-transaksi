@@ -1,37 +1,30 @@
 package project.akhir.danapprentechteam3.login.payload.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
 @Data
 public class ForgotPassword<U, L extends Number> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_reset")
     private Long idReset;
-    @Column(name = "token_reset_password")
+
     private String token ;
 
     private String otp ;
 
-    @Column
     private boolean statusOtp ;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
 
     private String email;
     private String noTelepon;
 
-    @Transient
     private String newPassword;
 
-    @Transient
     private String confirmPassword;
 
     public ForgotPassword()
