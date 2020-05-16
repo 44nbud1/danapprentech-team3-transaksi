@@ -1,15 +1,15 @@
 package project.akhir.danapprentechteam3.login.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import project.akhir.danapprentechteam3.login.payload.request.EmailOtp;
+import project.akhir.danapprentechteam3.login.payload.request.EmailToken;
 
-public interface EmailVerify extends JpaRepository<EmailOtp, Long>
+public interface EmailVerify extends JpaRepository<EmailToken, Long>
 {
-    EmailOtp findByCodeVerify(String code);
-    EmailOtp findByMobileNumber(String mobileNumber);
+    EmailToken findByCodeVerify(String code);
+    EmailToken findByMobileNumber(String mobileNumber);
     boolean existsByEmail(String email);
     boolean existsByMobileNumber(String mobileNumber);
     void deleteByEmail(String Email);
     void deleteByMobileNumber(String mobileNumber);
-    EmailOtp findByEmail(String email);
+    EmailToken findByEmail(String email);
 }

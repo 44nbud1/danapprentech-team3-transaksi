@@ -12,4 +12,5 @@ public interface TransaksiRepository extends JpaRepository<Transaksi, Long>
     boolean existsByStatusPembayaran(boolean statusPembayaran);
 //    Transaksi findByNomorTeleponUser(String nomorTeleponUser);
     List<Transaksi> findByNomorTeleponUser(String nomorTelepon);
+    void deleteByNomorTeleponUser(String nomorTelp);
 }

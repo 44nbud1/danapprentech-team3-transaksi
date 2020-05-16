@@ -21,9 +21,6 @@ import java.util.Set;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id", scope = User.class)
 public class User {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
 	@NotBlank
 	@Size(max = 15)
 	@Column

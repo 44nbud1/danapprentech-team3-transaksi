@@ -85,8 +85,7 @@ public class TransaksiController {
             transaksi.setNomorPaketData(choice.getNomorPaketData());
             transaksi.isStatusPembayaran();
             transaksi.setStatus("200");
-            transaksi.setMessage(
-                    "Transaction successfully");
+            transaksi.setMessage("Transaction successfully");
             transaksi.setTanggal(new Date());
 
             if (dataUser.getSaldo() < transaksi.getHarga()) {

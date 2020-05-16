@@ -21,12 +21,16 @@ public class CustomerChoice
     private String namaProvider;
     private Long harga;
     private String paketData;
-    private String noTelepon;
+
     @CreatedDate
     private Date waktuTransaksi;
     private boolean statusTransaksi = false;
     private String nomorPaketData;
+
+    @Transient
     private String status;
+    @Transient
     private String message;
 
+    private String noTelepon;
 }

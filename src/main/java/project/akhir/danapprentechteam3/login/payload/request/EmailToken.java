@@ -2,15 +2,13 @@ package project.akhir.danapprentechteam3.login.payload.request;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 @Data
 @Entity
-public class EmailOtp {
+@Table(name = "email_token")
+public class EmailToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
