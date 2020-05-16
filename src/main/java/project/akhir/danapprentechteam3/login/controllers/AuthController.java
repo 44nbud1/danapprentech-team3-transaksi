@@ -519,6 +519,9 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 				((smsOtp.getCodeOtp().equalsIgnoreCase("0000"))))
 		{
 
+			String status = "200";
+			String message = "signup is successfully";
+
 			//parse +62 -> 08
 			// Create new user's account and encode password
 			User user = new User();
@@ -527,9 +530,9 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setVirtualAccount(VirtualAccount);
 			user.setNamaUser(namaUser);
 			user.setPassword(password);
-			user.setStatus("200");
+			user.setStatus(status);
 			user.setPinTransaksi(pinTransaksi);
-			user.setMessage("signup is successfully");
+			user.setMessage(message);
 			user.setCreatedDate(new Date());
 			user.setUpdatedDate(new Date());
 			//save to database
@@ -540,7 +543,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			emailVerify.save(emailToken);
 
 			user.setTokenAkses(null);
-			userRepository.save(user);
+
 			return ResponseEntity.ok(userRepository.save(user));
 	} else {
 		return ResponseEntity.badRequest().body(new MessageResponse(
@@ -820,6 +823,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.ok(new MessageResponse
 					("Your account has been deleted...!","200"));
 		}
+
 		transaksiRepository.deleteByNomorTeleponUser(mobileNumber);
 		userRepository.deleteByNoTelepon(mobileNumber);
 		return ResponseEntity.ok(new MessageResponse
