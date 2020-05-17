@@ -329,7 +329,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		if (emailVerify.existsByEmail(signUpRequest.getEmail()))
 		{
-			emailVerify.deleteByMobileNumber(signUpRequest.getEmail());
+			emailVerify.deleteByMobileNumber(signUpRequest.getNoTelepon());
 		}
 
 		if (emailVerify.existsByMobileNumber
@@ -347,7 +347,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		if (smsOtpRepository.existsByMobileNumber(signUpRequest.getNoTelepon()))
 		{
 			smsOtpRepository.deleteByMobileNumber(signUpRequest.getNoTelepon());
-
 		}
 
 		//parse +62 -> 08
@@ -568,19 +567,27 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		EmailToken emailToken = emailVerify.findByEmail(forgotPassword.getEmail());
 		SmsOtp smsOtp = smsOtpRepository.findByMobileNumber(forgotPassword.getNoTelepon());
 
-//		if (emailVerify.existsByEmail(forgotPassword.getEmail()) && emailVerify.existsByMobileNumber
-//				(forgotPassword.getNoTelepon()))
-//		{
-//			System.out.println("ya");
-//			emailVerify.deleteByMobileNumber(forgotPassword.getNoTelepon());
-//		}
-//
-//		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()) && smsOtpRepository.existsByMobileNumber
-//				(forgotPassword.getNoTelepon()))
-//		{
-//			System.out.println("tidak");
-//			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
-//		}
+		if (emailVerify.existsByEmail(forgotPassword.getEmail()))
+		{
+			emailVerify.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (emailVerify.existsByMobileNumber
+				(forgotPassword.getNoTelepon()))
+		{
+			emailVerify.deleteByMobileNumber(forgotPassword.getNoTelepon());
+
+		}
+
+		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (smsOtpRepository.existsByMobileNumber(forgotPassword.getNoTelepon()))
+		{
+			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
 
 		if (!emailVerify.existsByEmail(forgotPassword.getEmail()))
 		{
@@ -684,8 +691,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			emailToken.setStatusEmailVerify(false);
 			emailVerify.save(emailToken);
 			smsOtpRepository.save(smsotps);
-			//save to database
-			userRepository.save(user);
+
 			return ResponseEntity.ok(userRepository.save(user));
 		} else {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The Otp is invalid or broken","400"));
@@ -708,6 +714,28 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 
 		emailVerify.save(emailToken);
 		smsOtpRepository.save(smsOtp);
+
+		if (emailVerify.existsByEmail(forgotPassword.getEmail()))
+		{
+			emailVerify.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (emailVerify.existsByMobileNumber
+				(forgotPassword.getNoTelepon()))
+		{
+			emailVerify.deleteByMobileNumber(forgotPassword.getNoTelepon());
+
+		}
+
+		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
+
+		if (smsOtpRepository.existsByMobileNumber(forgotPassword.getNoTelepon()))
+		{
+			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
+		}
 
 		if (emailVerify.existsByMobileNumber(forgotPassword.getNoTelepon()))
 		{
@@ -896,10 +924,22 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 					("ERROR : Phone Number not registered...!","400"));
 		}
 
-		if (user == null)
+		if (!passwordEmailVal.LengthUsername(editUser.getNamaUser()))
 		{
-			return ResponseEntity.badRequest().body(new MessageResponse
-					("ERROR : Phone Number not registered...!","400"));
+			logger.info("ERROR : Length nama user must be more than equal 3 character...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.Alphabetic(editUser.getNamaUser()))
+		{
+			logger.info("ERROR : Your phone number must be all Alphabetic...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your Full name must be all Alphabetic ...",
+							"400"));
 		}
 
 		user.setNamaUser(editUser.getNamaUser());
