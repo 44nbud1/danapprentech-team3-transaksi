@@ -525,6 +525,59 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Wrong otp","400"));
 		}
 
+		if (userRepository.existsByNoTelepon(otpNumber.getMobileNumber())) {
+			logger.info("ERROR : Username is already taken!");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Phone number is already taken!",
+							"400"));
+		}
+
+		if (!passwordEmailVal.EmailValidator(otpNumber.getEmail()))
+		{
+			logger.info("ERROR : Your email address is invalid....");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your email address is invalid....",
+							"400"));
+		}
+
+		if (userRepository.existsByEmail(otpNumber.getEmail()))
+		{
+			logger.info("ERROR : Email is already in use!");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Email is already in use!",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthPhoneNumber(otpNumber.getMobileNumber()))
+		{
+			logger.info("ERROR : Length phone number must be less than 15 ...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthUsername(otpNumber.getMobileNumber()))
+		{
+			logger.info("ERROR : Length nama user must be more than equal 3 character...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.NumberOnlyValidator(otpNumber.getMobileNumber()))
+		{
+			logger.info("ERROR : Your phone number must be all numeric...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
+							"400"));
+		}
+
 		if ((smsOtp.getCodeOtp().equalsIgnoreCase(otpNumber.getCodeOtp())))
 		{
 
@@ -552,6 +605,59 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			emailVerify.save(emailToken);
 
 			user.setTokenAkses(null);
+
+			if (userRepository.existsByNoTelepon(user.getNoTelepon())) {
+				logger.info("ERROR : Username is already taken!");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Phone number is already taken!",
+								"400"));
+			}
+
+			if (!passwordEmailVal.EmailValidator(user.getEmail()))
+			{
+				logger.info("ERROR : Your email address is invalid....");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Your email address is invalid....",
+								"400"));
+			}
+
+			if (userRepository.existsByEmail(user.getEmail()))
+			{
+				logger.info("ERROR : Email is already in use!");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Email is already in use!",
+								"400"));
+			}
+
+			if (!passwordEmailVal.LengthPhoneNumber(user.getNoTelepon()))
+			{
+				logger.info("ERROR : Length phone number must be less than 15 ...");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
+								"400"));
+			}
+
+			if (!passwordEmailVal.LengthUsername(user.getNoTelepon()))
+			{
+				logger.info("ERROR : Length nama user must be more than equal 3 character...");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
+								"400"));
+			}
+
+			if (!passwordEmailVal.NumberOnlyValidator(user.getNoTelepon()))
+			{
+				logger.info("ERROR : Your phone number must be all numeric...");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
+								"400"));
+			}
 
 			return ResponseEntity.ok(userRepository.save(user));
 	} else {
@@ -677,6 +783,60 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Wrong otp","400"));
 		}
 
+		if (userRepository.existsByNoTelepon(forgotPassword.getNoTelepon())) {
+			logger.info("ERROR : Username is already taken!");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Phone number is already taken!",
+							"400"));
+		}
+
+		if (!passwordEmailVal.EmailValidator(forgotPassword.getEmail()))
+		{
+			logger.info("ERROR : Your email address is invalid....");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your email address is invalid....",
+							"400"));
+		}
+
+		if (userRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			logger.info("ERROR : Email is already in use!");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Email is already in use!",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthPhoneNumber(forgotPassword.getNoTelepon()))
+		{
+			logger.info("ERROR : Length phone number must be less than 15 ...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthUsername(forgotPassword.getNoTelepon()))
+		{
+			logger.info("ERROR : Length nama user must be more than equal 3 character...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.NumberOnlyValidator(forgotPassword.getNoTelepon()))
+		{
+			logger.info("ERROR : Your phone number must be all numeric...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
+							"400"));
+		}
+
+
 		if (emailToken.isStatusEmailVerify() && smsotps.isStatusOtp())
 		{
 
@@ -690,6 +850,59 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			emailToken.setStatusEmailVerify(false);
 			emailVerify.save(emailToken);
 			smsOtpRepository.save(smsotps);
+
+			if (userRepository.existsByNoTelepon(forgotPassword.getNoTelepon())) {
+				logger.info("ERROR : Username is already taken!");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Phone number is already taken!",
+								"400"));
+			}
+
+			if (!passwordEmailVal.EmailValidator(forgotPassword.getEmail()))
+			{
+				logger.info("ERROR : Your email address is invalid....");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Your email address is invalid....",
+								"400"));
+			}
+
+			if (userRepository.existsByEmail(forgotPassword.getEmail()))
+			{
+				logger.info("ERROR : Email is already in use!");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Email is already in use!",
+								"400"));
+			}
+
+			if (!passwordEmailVal.LengthPhoneNumber(forgotPassword.getNoTelepon()))
+			{
+				logger.info("ERROR : Length phone number must be less than 15 ...");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
+								"400"));
+			}
+
+			if (!passwordEmailVal.LengthUsername(forgotPassword.getNoTelepon()))
+			{
+				logger.info("ERROR : Length nama user must be more than equal 3 character...");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
+								"400"));
+			}
+
+			if (!passwordEmailVal.NumberOnlyValidator(forgotPassword.getNoTelepon()))
+			{
+				logger.info("ERROR : Your phone number must be all numeric...");
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
+								"400"));
+			}
 
 			return ResponseEntity.ok(userRepository.save(user));
 		} else {
