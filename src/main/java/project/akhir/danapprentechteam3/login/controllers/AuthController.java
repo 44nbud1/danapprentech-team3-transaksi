@@ -601,8 +601,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			otpNumber.setStatusOtp(Boolean.FALSE);
 			emailToken.setStatusEmailVerify(Boolean.FALSE);
 
-			smsOtpRepository.save(otpNumber);
-			emailVerify.save(emailToken);
 
 			user.setTokenAkses(null);
 
@@ -658,6 +656,9 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 						.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
 								"400"));
 			}
+
+			smsOtpRepository.save(otpNumber);
+			emailVerify.save(emailToken);
 
 			return ResponseEntity.ok(userRepository.save(user));
 	} else {
@@ -791,48 +792,12 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 							"400"));
 		}
 
-		if (!passwordEmailVal.EmailValidator(forgotPassword.getEmail()))
-		{
-			logger.info("ERROR : Your email address is invalid....");
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("ERROR : Your email address is invalid....",
-							"400"));
-		}
-
 		if (userRepository.existsByEmail(forgotPassword.getEmail()))
 		{
 			logger.info("ERROR : Email is already in use!");
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("ERROR : Email is already in use!",
-							"400"));
-		}
-
-		if (!passwordEmailVal.LengthPhoneNumber(forgotPassword.getNoTelepon()))
-		{
-			logger.info("ERROR : Length phone number must be less than 15 ...");
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
-							"400"));
-		}
-
-		if (!passwordEmailVal.LengthUsername(forgotPassword.getNoTelepon()))
-		{
-			logger.info("ERROR : Length nama user must be more than equal 3 character...");
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
-							"400"));
-		}
-
-		if (!passwordEmailVal.NumberOnlyValidator(forgotPassword.getNoTelepon()))
-		{
-			logger.info("ERROR : Your phone number must be all numeric...");
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
 							"400"));
 		}
 
@@ -848,23 +813,12 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setPinTransaksi(user.getPinTransaksi());
 			smsotps.setStatusOtp(false);
 			emailToken.setStatusEmailVerify(false);
-			emailVerify.save(emailToken);
-			smsOtpRepository.save(smsotps);
 
 			if (userRepository.existsByNoTelepon(forgotPassword.getNoTelepon())) {
 				logger.info("ERROR : Username is already taken!");
 				return ResponseEntity
 						.badRequest()
 						.body(new MessageResponse("ERROR : Phone number is already taken!",
-								"400"));
-			}
-
-			if (!passwordEmailVal.EmailValidator(forgotPassword.getEmail()))
-			{
-				logger.info("ERROR : Your email address is invalid....");
-				return ResponseEntity
-						.badRequest()
-						.body(new MessageResponse("ERROR : Your email address is invalid....",
 								"400"));
 			}
 
@@ -877,33 +831,8 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 								"400"));
 			}
 
-			if (!passwordEmailVal.LengthPhoneNumber(forgotPassword.getNoTelepon()))
-			{
-				logger.info("ERROR : Length phone number must be less than 15 ...");
-				return ResponseEntity
-						.badRequest()
-						.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
-								"400"));
-			}
-
-			if (!passwordEmailVal.LengthUsername(forgotPassword.getNoTelepon()))
-			{
-				logger.info("ERROR : Length nama user must be more than equal 3 character...");
-				return ResponseEntity
-						.badRequest()
-						.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
-								"400"));
-			}
-
-			if (!passwordEmailVal.NumberOnlyValidator(forgotPassword.getNoTelepon()))
-			{
-				logger.info("ERROR : Your phone number must be all numeric...");
-				return ResponseEntity
-						.badRequest()
-						.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
-								"400"));
-			}
-
+			emailVerify.save(emailToken);
+			smsOtpRepository.save(smsotps);
 			return ResponseEntity.ok(userRepository.save(user));
 		} else {
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : The Otp is invalid or broken","400"));
