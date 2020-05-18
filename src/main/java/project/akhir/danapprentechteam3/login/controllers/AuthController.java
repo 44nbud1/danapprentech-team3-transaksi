@@ -348,6 +348,28 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		{
 			smsOtpRepository.deleteByMobileNumber(signUpRequest.getNoTelepon());
 		}
+//
+		if (emailVerify.existsByEmail(signUpRequest.getEmail()))
+		{
+			emailVerify.deleteByEmail(signUpRequest.getEmail());
+		}
+
+		if (emailVerify.existsByMobileNumber
+				(signUpRequest.getEmail()))
+		{
+			emailVerify.deleteByEmail(signUpRequest.getEmail());
+
+		}
+
+		if (smsOtpRepository.existsByEmail(signUpRequest.getEmail()))
+		{
+			smsOtpRepository.deleteByEmail(signUpRequest.getEmail());
+		}
+
+		if (smsOtpRepository.existsByMobileNumber(signUpRequest.getNoTelepon()))
+		{
+			smsOtpRepository.deleteByEmail(signUpRequest.getEmail());
+		}
 
 		//parse +62 -> 08
 		String va = signUpRequest.getNoTelepon().substring(3,signUpRequest.getNoTelepon().length());
@@ -696,6 +718,29 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
 		}
 
+		//
+		if (emailVerify.existsByEmail(forgotPassword.getEmail()))
+		{
+			emailVerify.deleteByEmail(forgotPassword.getEmail());
+		}
+
+		if (emailVerify.existsByMobileNumber
+				(forgotPassword.getNoTelepon()))
+		{
+			emailVerify.deleteByEmail(forgotPassword.getEmail());
+
+		}
+
+		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			smsOtpRepository.deleteByEmail(forgotPassword.getEmail());
+		}
+
+		if (smsOtpRepository.existsByMobileNumber(forgotPassword.getNoTelepon()))
+		{
+			smsOtpRepository.deleteByEmail(forgotPassword.getEmail());
+		}
+
 
 		// number verify
 		SmsOtp otp = new SmsOtp();
@@ -872,6 +917,30 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
 		}
 
+		//
+
+		if (emailVerify.existsByEmail(forgotPassword.getEmail()))
+		{
+			emailVerify.deleteByEmail(forgotPassword.getEmail());
+		}
+
+		if (emailVerify.existsByMobileNumber
+				(forgotPassword.getNoTelepon()))
+		{
+			emailVerify.deleteByEmail(forgotPassword.getEmail());
+
+		}
+
+		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()))
+		{
+			smsOtpRepository.deleteByEmail(forgotPassword.getEmail());
+		}
+
+		if (smsOtpRepository.existsByMobileNumber(forgotPassword.getEmail()))
+		{
+			smsOtpRepository.deleteByEmail(forgotPassword.getEmail());
+		}
+
 
 		// number verify
 		SmsOtp otp = new SmsOtp();
@@ -928,6 +997,70 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		if (!emailToken.isStatusEmailVerify())
 		{
 			return ResponseEntity.badRequest().body(new MessageResponse("ERROR : Otp Expired", "400"));
+		}
+
+		//
+
+		if (!passwordEmailVal.PasswordValidatorSpace(forgotPassword.getNewPassword())) {
+			logger.info("ERROR : Your password does not must contains white space...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your password does not must contains white space...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.PasswordValidatorLowercase(forgotPassword.getNewPassword()))
+		{
+			logger.info("ERROR : Your password must contains one lowercase characters...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your password must contains one lowercase characters...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.PasswordValidatorUpercase(forgotPassword.getNewPassword()))
+		{
+			logger.info("ERROR : Your password must contains one uppercase characters...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your password must contains one uppercase characters...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.PasswordValidatorSymbol(forgotPassword.getNewPassword()))
+		{
+			logger.info("ERROR : Your password must contains one symbol characters...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your password must contains one symbol characters...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.PasswordValidatorNumber(forgotPassword.getNewPassword()))
+		{
+			logger.info("ERROR : Your password must contains one digit from 0-9...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your password must contains one digit from 0-9...",
+							"400"));
+		}
+
+		if (!passwordEmailVal.confirmPassword(forgotPassword.getNewPassword(),forgotPassword.getConfirmPassword()))
+		{
+			logger.info("ERROR : Please check your password not Match!");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Please check your password not Match!",
+							"400"));
+		}
+
+		if (!passwordEmailVal.LengthPassword(forgotPassword.getNewPassword()))
+		{
+			logger.info("ERROR : Your password must be more than 7 and less than 17...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your password must be more than 7 and less than 17...",
+							"400"));
 		}
 
 		if (emailToken.isStatusEmailVerify() && smsotps.isStatusOtp())
