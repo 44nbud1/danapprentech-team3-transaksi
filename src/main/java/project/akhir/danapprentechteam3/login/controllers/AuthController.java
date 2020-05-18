@@ -716,8 +716,11 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		mailMessage.setTo(forgotPassword.getEmail());
 		mailMessage.setSubject("Test test");
 		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-		mailMessage.setText("To confirm "+"https://project-danapprentech-3.herokuapp.com/api/auth/confirmation-account/"+
+		mailMessage.setText("To confirm "+"https://project-danapprentech-3.herokuapp.com/api/auth/confirm-password/"+
 				emailToken.getCodeVerify());
+
+//		mailMessage.setText("To confirm "+"http://localhost:7474/api/auth/confirm-password/"+
+//				emailToken.getCodeVerify());
 		emailSenderService.sendEmail(mailMessage);
 
 		emailVerify.save(emailToken);
@@ -889,7 +892,7 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 		mailMessage.setTo(forgotPassword.getEmail());
 		mailMessage.setSubject("Test test");
 		mailMessage.setFrom("setiawan.aanbudi@gmail.com");
-		mailMessage.setText("To confirm "+"https://project-danapprentech-3.herokuapp.com/api/auth/confirmation-account/"+
+		mailMessage.setText("To confirm "+"https://project-danapprentech-3.herokuapp.com/api/auth/confirm-password/"+
 				emailToken.getCodeVerify());
 		emailSenderService.sendEmail(mailMessage);
 
@@ -938,10 +941,11 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			user.setPinTransaksi(user.getPinTransaksi());
 			smsotps.setStatusOtp(false);
 			emailToken.setStatusEmailVerify(false);
+
 			emailVerify.save(emailToken);
 			smsOtpRepository.save(smsotps);
 			//save to database
-			userRepository.save(user);
+
 			return ResponseEntity.ok(userRepository.save(user));
 		}else {
 			return ResponseEntity.badRequest().body(new MessageResponse("Email not registered...!","400"));
