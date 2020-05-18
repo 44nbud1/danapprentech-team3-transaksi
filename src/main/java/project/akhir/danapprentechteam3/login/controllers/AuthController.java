@@ -718,29 +718,40 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
 		}
 
-		//
-		if (emailVerify.existsByEmail(forgotPassword.getEmail()))
-		{
-			emailVerify.deleteByEmail(forgotPassword.getEmail());
+		if (!userRepository.existsByNoTelepon(forgotPassword.getNoTelepon())) {
+			logger.info("ERROR : Username is already taken!");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Phone number is already taken!",
+							"400"));
 		}
 
-		if (emailVerify.existsByMobileNumber
-				(forgotPassword.getNoTelepon()))
+		if (!passwordEmailVal.LengthPhoneNumber(forgotPassword.getNewPassword()))
 		{
-			emailVerify.deleteByEmail(forgotPassword.getEmail());
-
+			logger.info("ERROR : Length phone number must be less than 15 ...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be less than 15 ...",
+							"400"));
 		}
 
-		if (smsOtpRepository.existsByEmail(forgotPassword.getEmail()))
+		if (!passwordEmailVal.LengthUsername(forgotPassword.getNoTelepon()))
 		{
-			smsOtpRepository.deleteByEmail(forgotPassword.getEmail());
+			logger.info("ERROR : Length nama user must be more than equal 3 character...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Length nama user must be less than 3 character...",
+							"400"));
 		}
 
-		if (smsOtpRepository.existsByMobileNumber(forgotPassword.getNoTelepon()))
+		if (!passwordEmailVal.NumberOnlyValidator(forgotPassword.getNoTelepon()))
 		{
-			smsOtpRepository.deleteByEmail(forgotPassword.getEmail());
+			logger.info("ERROR : Your phone number must be all numeric...");
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("ERROR : Your phone number must be all numeric ...",
+							"400"));
 		}
-
 
 		// number verify
 		SmsOtp otp = new SmsOtp();
