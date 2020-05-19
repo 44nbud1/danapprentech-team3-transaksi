@@ -718,14 +718,6 @@ public class AuthController<ACCOUNT_AUTH_ID, ACCOUNT_SID> {
 			smsOtpRepository.deleteByMobileNumber(forgotPassword.getNoTelepon());
 		}
 
-		if (!userRepository.existsByNoTelepon(forgotPassword.getNoTelepon())) {
-			logger.info("ERROR : Username is already taken!");
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("ERROR : Phone number is already taken!",
-							"400"));
-		}
-
 		if (!passwordEmailVal.LengthPhoneNumber(forgotPassword.getNewPassword()))
 		{
 			logger.info("ERROR : Length phone number must be less than 15 ...");
